@@ -35,6 +35,7 @@ class CustomTextField extends StatelessWidget {
   final bool showlabeltop;
   final Widget? suffix;
   final Function(String?)? onChanged;
+  final TextInputType? keyboardType;
   CustomTextField({
     Key? key,
     required this.controller,
@@ -66,7 +67,8 @@ class CustomTextField extends StatelessWidget {
     this.showlabel= false,
     this.showlabeltop= false,
     this.onChanged,
-     this.suffix
+     this.suffix,
+    this.keyboardType
   }) : super(key: key);
 
   @override
@@ -112,6 +114,7 @@ class CustomTextField extends StatelessWidget {
                   obscureText: obscureText,
                   textAlign: textAlign,
                   onChanged: onChanged,
+                  keyboardType: keyboardType,
                   decoration: InputDecoration(
                     hintText: hintText,
                     suffix: suffix,
