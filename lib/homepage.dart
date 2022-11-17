@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:din/constants/colors.dart';
 import 'package:din/constants/global_data.dart';
 import 'package:din/constants/image_urls.dart';
@@ -12,13 +14,16 @@ import 'package:din/pages/map_page.dart';
 import 'package:din/pages/map_view_home_page.dart';
 import 'package:din/pages/marker_info_page.dart';
 import 'package:din/services/api_urls.dart';
+import 'package:din/services/home_page_services.dart';
 import 'package:din/services/webservices.dart';
 import 'package:din/widgets/CustomTexts.dart';
 import 'package:din/widgets/buttons.dart';
 import 'package:din/widgets/customtextfield.dart';
 import 'package:din/widgets/dropdown.dart';
+import 'package:din/widgets/showSnackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
@@ -146,7 +151,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    print('h $markers');
+    print(' ffffff ${!selectedkdamBakamType.containsKey(2) || selectedkdamBakamType.length!=1}  ${selectedkdamBakamType.containsKey(2)} ${selectedkdamBakamType.length}');
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: MyColors.whiteColor,
@@ -155,9 +160,12 @@ class _HomePageState extends State<HomePage>
 
         elevation: 1,
         automaticallyImplyLeading: false,
-        leading: IconButton(onPressed: (){
-          push(context: context, screen: AboutUsPage());
-        },icon: Icon(Icons.info, color: Colors.black,)),
+        leading: Tooltip(
+          message: 'About Us',
+          child: IconButton(onPressed: (){
+            push(context: context, screen: AboutUsPage());
+          },icon: Icon(Icons.info, color: Colors.black,)),
+        ),
         title: const Text('Home',
             style: TextStyle(color: Colors.black, fontFamily: 'semibold')),
         centerTitle: true,
@@ -219,38 +227,43 @@ class _HomePageState extends State<HomePage>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 24,
-                                  height: 24,
+                                  width: 40,
+                                  height: 40,
                                   child: Checkbox(
                                     checkColor: Colors.white,
                                     value: selectedkdamBakamType[
                                     kdamBakamType[i]['id']] ??
                                         false,
                                     onChanged: (bool? value) {
+                                      if (value == true) {
+                                        selectedkdamBakamType.clear();
+                                        selectedkdamBakamType[
+                                        kdamBakamType[i]['id']] = value;
+                                      } else {
+                                        selectedkdamBakamType
+                                            .remove(kdamBakamType[i]['id']);
+                                      }
                                       setState(() {
                                         // isChecked = value;
                                         // kdamCategories[i]['isChecked'] = value;
-                                        if (value == true) {
-                                          selectedkdamBakamType[
-                                          kdamBakamType[i]['id']] = value;
-                                        } else {
-                                          selectedkdamBakamType
-                                              .remove(kdamBakamType[i]['id']);
-                                        }
+
                                       });
                                     },
                                   ),
                                 ),
                                 wSizedBox05,
-                                MainHeadingText(
-                                  text: '${kdamBakamType[i]['name']}',
-                                  fontSize: 14,
-                                  fontFamily: 'light',
+                                Expanded(
+                                  child: MainHeadingText(
+                                    text: '${kdamBakamType[i]['name']}',
+                                    fontSize: 14,
+                                    fontFamily: 'light',
+                                  ),
                                 )
                               ],
                             ),
                         ],
                       ),
+                      if(!selectedkdamBakamType.containsKey(2) || selectedkdamBakamType.length!=1)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -263,8 +276,8 @@ class _HomePageState extends State<HomePage>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 24,
-                                  height: 24,
+                                  width: 40,
+                                  height: 40,
                                   child: Checkbox(
                                     checkColor: Colors.white,
                                     value: selectedDamCategories[
@@ -295,6 +308,8 @@ class _HomePageState extends State<HomePage>
                             ),
                         ],
                       ),
+                      if(!selectedkdamBakamType.containsKey(2) ||
+                          selectedkdamBakamType.length!=1)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -304,44 +319,42 @@ class _HomePageState extends State<HomePage>
                             fontSize: 16,
                           ),
                           hSizedBox,
-                          Wrap(
-                            children: [
-                              for (int i = 0; i < kdamTypes.length; i++)
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: Checkbox(
-                                        checkColor: Colors.white,
-                                        value: selectedDamTypes[kdamTypes[i]
-                                                ['id']] ??
-                                            false,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            // isChecked = value;
-                                            // kdamCategories[i]['isChecked'] = value;
-                                            if (value == true) {
-                                              selectedDamTypes[kdamTypes[i]
-                                                  ['id']] = value;
-                                            } else {
-                                              selectedDamTypes
-                                                  .remove(kdamTypes[i]['id']);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    wSizedBox05,
-                                    MainHeadingText(
-                                      text: '${kdamTypes[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    )
-                                  ],
+                          for (int i = 0; i < kdamTypes.length; i++)
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: Checkbox(
+                                    checkColor: Colors.white,
+                                    value: selectedDamTypes[kdamTypes[i]
+                                            ['id']] ??
+                                        false,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        // isChecked = value;
+                                        // kdamCategories[i]['isChecked'] = value;
+                                        if (value == true) {
+                                          selectedDamTypes[kdamTypes[i]
+                                              ['id']] = value;
+                                        } else {
+                                          selectedDamTypes
+                                              .remove(kdamTypes[i]['id']);
+                                        }
+                                      });
+                                    },
+                                  ),
                                 ),
-                            ],
-                          )
+                                wSizedBox05,
+                                Expanded(
+                                  child: MainHeadingText(
+                                    text: '${kdamTypes[i]['name']}',
+                                    fontSize: 14,
+                                    fontFamily: 'light',
+                                  ),
+                                )
+                              ],
+                            )
                         ],
                       ),
                       Column(
@@ -357,8 +370,8 @@ class _HomePageState extends State<HomePage>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 24,
-                                  height: 24,
+                                  width: 40,
+                                  height: 40,
                                   child: Checkbox(
                                     checkColor: Colors.white,
                                     value: selectedDamHydrologicalArea[
@@ -381,10 +394,12 @@ class _HomePageState extends State<HomePage>
                                   ),
                                 ),
                                 wSizedBox05,
-                                MainHeadingText(
-                                  text: '${kdamHydrologicalArea[i]['name']}',
-                                  fontSize: 14,
-                                  fontFamily: 'light',
+                                Expanded(
+                                  child: MainHeadingText(
+                                    text: '${kdamHydrologicalArea[i]['name']}',
+                                    fontSize: 14,
+                                    fontFamily: 'light',
+                                  ),
                                 )
                               ],
                             ),
@@ -403,8 +418,8 @@ class _HomePageState extends State<HomePage>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 24,
-                                  height: 24,
+                                  width: 40,
+                                  height: 40,
                                   child: Checkbox(
                                     checkColor: Colors.white,
                                     value: selectedDamRiverBasin[
@@ -426,10 +441,12 @@ class _HomePageState extends State<HomePage>
                                   ),
                                 ),
                                 wSizedBox05,
-                                MainHeadingText(
-                                  text: '${kdamRiver_basin[i]['name']}',
-                                  fontSize: 14,
-                                  fontFamily: 'light',
+                                Expanded(
+                                  child: MainHeadingText(
+                                    text: '${kdamRiver_basin[i]['name']}',
+                                    fontSize: 14,
+                                    fontFamily: 'light',
+                                  ),
                                 )
                               ],
                             ),
@@ -450,8 +467,8 @@ class _HomePageState extends State<HomePage>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 24,
-                                  height: 24,
+                                  width: 40,
+                                  height: 40,
                                   child: Checkbox(
                                     checkColor: Colors.white,
                                     value: selectedDamGeoPoliticalZone[
@@ -474,10 +491,12 @@ class _HomePageState extends State<HomePage>
                                   ),
                                 ),
                                 wSizedBox05,
-                                MainHeadingText(
-                                  text: '${kdamGeo_political_zone[i]['name']}',
-                                  fontSize: 14,
-                                  fontFamily: 'light',
+                                Expanded(
+                                  child: MainHeadingText(
+                                    text: '${kdamGeo_political_zone[i]['name']}',
+                                    fontSize: 14,
+                                    fontFamily: 'light',
+                                  ),
                                 )
                               ],
                             ),
@@ -496,8 +515,8 @@ class _HomePageState extends State<HomePage>
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 24,
-                                  height: 24,
+                                  width: 40,
+                                  height: 40,
                                   child: Checkbox(
                                     checkColor: Colors.white,
                                     value: selectedDamState[kstate[i]['id']] ??
@@ -518,10 +537,12 @@ class _HomePageState extends State<HomePage>
                                   ),
                                 ),
                                 wSizedBox05,
-                                MainHeadingText(
-                                  text: '${kstate[i]['name']}',
-                                  fontSize: 14,
-                                  fontFamily: 'light',
+                                Expanded(
+                                  child: MainHeadingText(
+                                    text: '${kstate[i]['name']}',
+                                    fontSize: 14,
+                                    fontFamily: 'light',
+                                  ),
                                 )
                               ],
                             ),
@@ -841,7 +862,7 @@ class _HomePageState extends State<HomePage>
                       //     )
                       //   ],
                       // ),
-                      hSizedBox4,
+                      hSizedBox8,
                       // Image.asset('assets/images/map-2.png'),
                       // hSizedBox4,
                     ],
@@ -872,7 +893,8 @@ class _HomePageState extends State<HomePage>
                           // list_type:1
 
                           Map<String, dynamic> request = {};
-                          if (selectedDamCategories.isNotEmpty) {
+                          if (selectedDamCategories.isNotEmpty && (!selectedkdamBakamType.containsKey(2) ||
+                          selectedkdamBakamType.length!=1)) {
                             request['cat_ids'] =
                                 selectedDamCategories.keys.join(',');
                           }
@@ -882,7 +904,8 @@ class _HomePageState extends State<HomePage>
                           if(selectedkdamBakamType.isNotEmpty){
                             request['list_type'] = selectedkdamBakamType.keys.join(',');
                           }
-                          if(selectedDamTypes.isNotEmpty){
+                          if(selectedDamTypes.isNotEmpty && (!selectedkdamBakamType.containsKey(2) ||
+                              selectedkdamBakamType.length!=1)){
                             request['type_ids'] = selectedDamTypes.keys.join(',');
                           }
                           if(selectedDamHydrologicalArea.isNotEmpty){
@@ -1016,59 +1039,159 @@ class _HomePageState extends State<HomePage>
                 children: [
                   Expanded(
                       flex: 8,
-                      child: CustomTextField(
-                          controller: email,
-                          suffix: Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child:email.text.length<1?null: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: (){
-                                email.clear();
-                                damSearchText = email.text;
-                                setState(() {
+                      child:
+                      TypeAheadField<Map<String,dynamic>>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          autofocus: false,
+                          style: TextStyle(color: Colors.black, fontSize: 13, fontFamily: 'regular'),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
 
-                                });
-                              },
-                              icon: Icon(Icons.clear),
-                            ),
-                          ),
-                          borderradius: 100,
-                          onChanged: (val){
-                            print('hello');
+                              ),
+                              // border: InputBorder.none,
+                              hintText: 'Search by name, Min 3 Char'),
+                        ),
+                        suggestionsCallback: (pattern) async {
 
-                            if(email.text.length>2){
-                              damSearchText = email.text;
-                              var request = {
-                                'search_text': val
-                              };
-                              setState(() {
-
-                              });
-                              getDams(request: request).then((d){
-                                setState(() {
-
-                                });
+                          return await SearchingServices.getSuggestions(pattern);
+                        },
+                        itemBuilder: (context, Map<String, dynamic> suggestion) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            child: ParagraphText(text: '${suggestion['name']}', color: Colors.black,),
+                          );
+                          return ListTile(
+                            leading: Icon(Icons.shopping_cart),
+                            title: Text(suggestion['name']??'d'),
+                            subtitle: Text('\$${suggestion['price']}'),
+                          );
+                        },
+                        onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                          try{
+                            // markers.add(
+                            //   Marker(
+                            //     point: LatLng(double.parse(suggestion['latitude']),
+                            //         double.parse(suggestion['longitude'])),
+                            //     height: 95,
+                            //     width: 100,
+                            //     builder: (context) {
+                            //       return GestureDetector(
+                            //         onTap: (){
+                            //           print('Marker ${suggestion['name']} pressed');
+                            //           showDialog(context: context, builder: (context){
+                            //             return MarkerInfoWindow(damInfo: suggestion,);
+                            //           });
+                            //         },
+                            //         child: Column(
+                            //           children: [
+                            //             Expanded(
+                            //               child: Container(
+                            //                 child: Image.asset(
+                            //                   MyImages.markerIcon,
+                            //                   fit: BoxFit.fitHeight,
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //             Icon(Icons.circle, color: Colors.brown,size: 10,),
+                            //             Container(
+                            //               height: 10,
+                            //               width: 1,
+                            //               color: Colors.blue,
+                            //             ),
+                            //
+                            //             Container(
+                            //               padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            //               decoration: BoxDecoration(
+                            //                   color: Colors.blue,
+                            //                   borderRadius: BorderRadius.circular(20)
+                            //               ),
+                            //
+                            //               child: ParagraphText(text: '${suggestion['name']}', fontSize: 11,color: Colors.white,),
+                            //             )
+                            //           ],
+                            //         ),
+                            //       );
+                            //     },
+                            //   ),
+                            // );
+                            // setState(() {
+                            //
+                            // });
+                            if(suggestion['latitude']!='' && suggestion['longitude']!='' && suggestion['latitude']!=null && suggestion['longitude']!=null){
+                              MyGlobalKeys.mapViewPageKey.currentState?.resetLocation(LatLng(double.parse(suggestion['latitude']), double.parse(suggestion['longitude'])),zoom: 17);
+                              showDialog(context: context, builder: (context){
+                                return MarkerInfoWindow(damInfo: suggestion,);
                               });
                             }else{
-                              getDams().then((d){
-                                setState(() {
-
-                                });
-                              });
+                              showSnackbar('Location coordinates not available');
                             }
-                            setState(() {
 
+
+                          }catch(e){
+                            print('Error in catch block 182838 $e');
+                            showDialog(context: context, builder: (context){
+                              return MarkerInfoWindow(damInfo: suggestion,);
                             });
-                          },
-
-                          hintText: 'Search by name, Min 3 char')),
+                          }
+                          // Navigator.of(context).push<void>(MaterialPageRoute(
+                          //     builder: (context) => ProductPage(product: suggestion)));
+                        },
+                      ),
+                      // CustomTextField(
+                      //     controller: email,
+                      //     suffix: Padding(
+                      //       padding: const EdgeInsets.only(top: 5),
+                      //       child:email.text.length<1?null: IconButton(
+                      //         padding: EdgeInsets.zero,
+                      //         onPressed: (){
+                      //           email.clear();
+                      //           damSearchText = email.text;
+                      //           setState(() {
+                      //
+                      //           });
+                      //         },
+                      //         icon: Icon(Icons.clear),
+                      //       ),
+                      //     ),
+                      //     borderradius: 100,
+                      //     onChanged: (val){
+                      //       print('hello');
+                      //
+                      //       if(email.text.length>2){
+                      //         damSearchText = email.text;
+                      //         var request = {
+                      //           'search_text': val
+                      //         };
+                      //         // setState(() {
+                      //         //
+                      //         // });
+                      //         getDams(request: request).then((d){
+                      //           setState(() {
+                      //
+                      //           });
+                      //         });
+                      //       }else{
+                      //         getDams().then((d){
+                      //           setState(() {
+                      //
+                      //           });
+                      //         });
+                      //       }
+                      //       // setState(() {
+                      //       //
+                      //       // });
+                      //     },
+                      //
+                      //     hintText: 'Search by name, Min 3 char'),
+                  ),
                   wSizedBox05,
                   Expanded(
                       flex: 4,
                       child: GestureDetector(
                         onTap: () => _scaffoldKey.currentState?.openDrawer(),
                         child: Tooltip(
-                          message: 'Select Filter',
+                          message: 'Select for more options',
                           child: Center(
                             child: Container(
                               height: 50,
@@ -1098,6 +1221,41 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
+            // Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            //     child: TypeAheadField<Map<String,dynamic>>(
+            //       textFieldConfiguration: TextFieldConfiguration(
+            //         autofocus: true,
+            //         style: TextStyle(color: Colors.black, fontSize: 13, fontFamily: 'regular'),
+            //         decoration: InputDecoration(
+            //             border: OutlineInputBorder(
+            //               borderRadius: BorderRadius.circular(20),
+            //
+            //             ),
+            //             // border: InputBorder.none,
+            //             hintText: 'Search by name, Min 3 Char'),
+            //       ),
+            //       suggestionsCallback: (pattern) async {
+            //
+            //         return await SearchingServices.getSuggestions(pattern);
+            //       },
+            //       itemBuilder: (context, Map<String, dynamic> suggestion) {
+            //         return Container(
+            //           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            //           child: ParagraphText(text: '${suggestion['name']}', color: Colors.black,),
+            //         );
+            //         return ListTile(
+            //           leading: Icon(Icons.shopping_cart),
+            //           title: Text(suggestion['name']??'d'),
+            //           subtitle: Text('\$${suggestion['price']}'),
+            //         );
+            //       },
+            //       onSuggestionSelected: (Map<String, dynamic> suggestion) {
+            //         Navigator.of(context).push<void>(MaterialPageRoute(
+            //             builder: (context) => ProductPage(product: suggestion)));
+            //       },
+            //     ),
+            // ),
             hSizedBox,
             Expanded(
               child: TabBarView(
@@ -1368,6 +1526,32 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class ProductPage extends StatelessWidget {
+  final Map<String, dynamic> product;
+
+  ProductPage({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(50.0),
+        child: Column(
+          children: [
+            Text(
+              this.product['name']!,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            Text(
+              this.product['price']! + ' USD',
+              style: Theme.of(context).textTheme.subtitle1,
+            )
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:din/constants/global_keys.dart';
 import 'package:din/constants/image_urls.dart';
 import 'package:din/pages/marker_info_page.dart';
 import 'package:din/services/api_urls.dart';
@@ -41,8 +42,8 @@ class MapViewHomePageState extends State<MapViewHomePage>
   }
 
 
-  resetLocation()async{
-    mapController.move(LatLng(9.0820,  8.6753), 8);
+  resetLocation(LatLng latLng,{ double? zoom})async{
+    mapController.move(latLng, zoom??8);
     print('the current location is ${currentPosition?.longitude}');
     // getDams();
   }
@@ -70,8 +71,11 @@ class MapViewHomePageState extends State<MapViewHomePage>
                         mapController: mapController,
                     options: MapOptions(
                       // center: LatLng(currentPosition?.latitude??11.415018, currentPosition?.longitude??5.28),
-                      center: LatLng(9.0820,  8.6753),
-                      zoom: 8,
+                      // center: LatLng(9.0820,  8.6753),
+                      // center: LatLng(30, 40),
+                      center: LatLng(9.35962,  8.76361),
+
+                      zoom: 11,
                     ),
                     nonRotatedChildren: [],
                     children: [
@@ -81,6 +85,20 @@ class MapViewHomePageState extends State<MapViewHomePage>
                         // userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                       ),
                       MarkerLayer(markers: markers),
+
+                      // PolygonLayer(
+                      //   polygonCulling: true,
+                      //
+                      //   polygons: [
+                      //     Polygon(
+                      //       isFilled: true,
+                      //       points: [LatLng(20, 25), LatLng(25, 30), LatLng(30, 35),LatLng(35, 40),LatLng(40, 45),LatLng(20, 25),],
+                      //       color: Colors.blue.withOpacity(0.4),
+                      //       borderColor: Colors.red,
+                      //       borderStrokeWidth: 1
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   )),
                 ],
@@ -90,7 +108,9 @@ class MapViewHomePageState extends State<MapViewHomePage>
               child: Tooltip(
                 message: 'Reset location',
                 child: IconButton(onPressed: (){
-    resetLocation();
+
+                  
+    resetLocation(LatLng(9.0820,  8.6753));
     }, icon: Icon(Icons.refresh, color: Colors.black, size: 26,),),
               ),
             )

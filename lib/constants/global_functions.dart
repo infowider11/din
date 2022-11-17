@@ -26,7 +26,7 @@ getDams({Map<String,dynamic> request = const {}}) async {
 
   for (int i = 0; i < damList.length; i++) {
     print('s${damList[i]['latitude']}s ------- s${damList[i]['longitude']}s');
-    if(damList[i]['latitude']!='' && damList[i]['longitude']!=''){
+    if(damList[i]['latitude']!='' && damList[i]['longitude']!='' && damList[i]['latitude']!=null && damList[i]['longitude']!=null){
       markers.add(
         Marker(
           point: LatLng(double.parse(damList[i]['latitude']),
@@ -55,17 +55,17 @@ getDams({Map<String,dynamic> request = const {}}) async {
                   Container(
                     height: 10,
                     width: 1,
-                    color: Colors.red,
+                    color: Colors.blue,
                   ),
 
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: Colors.blue,
                         borderRadius: BorderRadius.circular(20)
                     ),
 
-                    child: ParagraphText(text: '${damList[i]['name']}', fontSize: 8,color: Colors.white,),
+                    child: ParagraphText(text: '${damList[i]['name']}', fontSize: 11,color: Colors.white,),
                   )
                 ],
               ),

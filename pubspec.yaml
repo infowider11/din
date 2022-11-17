@@ -49,6 +49,7 @@ dependencies:
   geolocator: ^8.2.0
   flutter_html: ^2.2.1
   photo_view: ^0.14.0
+  flutter_typeahead: ^4.1.1
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/shapefiles/
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

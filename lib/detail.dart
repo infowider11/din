@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:din/constants/colors.dart';
 import 'package:din/constants/navigation.dart';
 import 'package:din/constants/sized_box.dart';
+import 'package:din/dialogs/download_form_dialog.dart';
 import 'package:din/pages/viewImages.dart';
 import 'package:din/services/api_urls.dart';
 import 'package:din/services/webservices.dart';
@@ -30,7 +31,8 @@ class _DetailPageState extends State<DetailPage> {
   final CarouselController carousalController = CarouselController();
   TextEditingController email = TextEditingController();
   TextEditingController name = TextEditingController();
-  TextEditingController phone = TextEditingController();
+  TextEditingController idsTextController = TextEditingController();
+  // TextEditingController phone = TextEditingController();
 
   bool load = false;
   Map? damDetails;
@@ -452,270 +454,307 @@ class _DetailPageState extends State<DetailPage> {
                     // ),
                         hSizedBox2,
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            RoundEdgedButton(text: 'View Online',
-                              width: 170,
-                              height: 40,
-                              borderRadius: 4,
-                              fontSize: 18,
-                              color: MyColors.purpleColor,
-                            onTap: (){
-                              push(context: context, screen: ViewOnlinePage(damId: widget.damId.toString(), damName:damDetails?['name'],));
-                            },),
-                            RoundEdgedButton(
-                              onTap: () => showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => SimpleDialog(
-                                  backgroundColor: Colors.transparent,
-                                  // title:const Text('GeeksforGeeks'),
-                                  children: [
-                                    Container(
-                                      width: 450,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Color(0xFEFAFAFA),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                height: 55,
-                                                decoration: BoxDecoration(
-                                                    color: MyColors.purpleColor,
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(5),
-                                                      topRight: Radius.circular(5),
-                                                    )),
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: Stack(
-                                                  alignment: Alignment.center,
-                                                  children: [
-                                                    MainHeadingText(
-                                                      text: 'Download Form',
-                                                      textAlign: TextAlign.center,
-                                                      fontSize: 18,
-                                                      color: MyColors.whiteColor,
-                                                    ),
-                                                    Positioned(
-                                                      right: 5,
-                                                      child: GestureDetector(
-                                                        onTap: (){
-                                                          Navigator.pop(context);
-                                                        },
-                                                        child: Icon(
-                                                          Icons.close,
-                                                          color:
-                                                              MyColors.whiteColor,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(16),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    MainHeadingText(
-                                                      text:
-                                                          'Please enter your personal detail',
-                                                      fontSize: 15,
-                                                    ),
-                                                    hSizedBox2,
-                                                    CustomTextField(
-                                                        controller: name,
-                                                        labelfontfamily: 'regular',
-                                                        height: 40,
-                                                        borderradius: 5,
-                                                        label: 'Name',
-                                                        showlabel: true,
-                                                        hintText:
-                                                            'Please enter your name'),
-                                                    hSizedBox,
-                                                    CustomTextField(
-                                                        controller: email,
-                                                        labelfontfamily: 'regular',
-                                                        height: 40,
-                                                        borderradius: 5,
-                                                        label: 'Email',
-                                                        showlabel: true,
-                                                        hintText:
-                                                            'Please enter your Email id'),
-                                                    hSizedBox,
-                                                    CustomTextField(
-                                                        controller: phone,
-                                                        labelfontfamily: 'regular',
-                                                        height: 40,
-                                                        borderradius: 5,
-                                                        label: 'Phone Number',
-                                                        showlabel: true,
-                                                         keyboardType: TextInputType.number,
-                                                        hintText:
-                                                            'Please enter your phone number'),
-                                                    hSizedBox2,
-                                                    Center(
-                                                        child: RoundEdgedButton(
+                            Column(
 
-                                                            onTap: ()  async{
-                                                            String pattern =
-                                                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                                                            RegExp regex = new RegExp(pattern);
-                                                        String phonePattern =
-                                                        r'^(\+?\d{1,4}[\s-])?(?!0+\s+,?$)\d{10}\s*,?$';
-                                                        RegExp pnumber = new RegExp(phonePattern);
-                                                          if(name.text==""){
-                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                            const SnackBar(content: Text('Please enter your name.')));
-                                                          }
-                                                          else if(email.text==''){
-                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                const SnackBar(content: Text('Please enter your email.')));
-                                                          }
-                                                            else if (!regex.hasMatch(email.text)) {
-                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                 const SnackBar(content: Text('Please enter valid email.')));
-                                                         }
-                                                                 else if(phone.text==''){
-                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                  const SnackBar(content: Text('Please enter your phone number.')));
-                                                            }
-                                                                else if (!pnumber.hasMatch(phone.text)) {
-                                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                                    const SnackBar(content: Text('Please enter valid phone number.')));
-                                                                 }
-
-                                                                else {
-
-                                                                  Map<String, dynamic> request={
-                                                                    'dam_id':widget.damId.toString(),
-                                                                    'name':name.text,
-                                                                    'email':email.text,
-                                                                    'phone':phone.text
-                                                                  };
-                                                                  print("request-------------${request}");
-                                                                  print("api-------------${ApiUrls.downloadform}");
-
-                                                                  var res = await Webservices.postData(apiUrl: ApiUrls.downloadform, request: request);
-                                                                  print("res-------------${res}");
-
-                                                                  if(res['status'].toString()=="1"){
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    showDialog<
-                                                                        String>(
-                                                                      context:
-                                                                      context,
-                                                                      builder: (
-                                                                          BuildContext
-                                                                          context) =>
-                                                                          SimpleDialog(
-                                                                            backgroundColor:
-                                                                            Colors
-                                                                                .transparent,
-                                                                            children: [
-                                                                              Container(
-                                                                                width:
-                                                                                450,
-                                                                                decoration:
-                                                                                BoxDecoration(
-                                                                                  borderRadius:
-                                                                                  BorderRadius
-                                                                                      .circular(
-                                                                                      5),
-                                                                                  color: Color(
-                                                                                      0xFEFAFAFA),
-                                                                                ),
-                                                                                padding:
-                                                                                EdgeInsets
-                                                                                    .all(
-                                                                                    16),
-                                                                                child:
-                                                                                Column(
-                                                                                  children: [
-                                                                                    Column(
-                                                                                      children: [
-                                                                                        Image
-                                                                                            .asset(
-                                                                                          'assets/images/check.png',
-                                                                                          width: 150,
-                                                                                        ),
-                                                                                        hSizedBox2,
-                                                                                        MainHeadingText(
-                                                                                          fontFamily: 'light',
-                                                                                          height: 1.3,
-                                                                                          text: 'Thank you ! Your Request has been sent successfully, You will receive mail soon with all data.',
-                                                                                          fontSize: 16,
-                                                                                          color: MyColors
-                                                                                              .headingcolor,
-                                                                                          textAlign: TextAlign
-                                                                                              .center,
-                                                                                        ),
-                                                                                        hSizedBox2,
-                                                                                        RoundEdgedButton(
-                                                                                            onTap: () =>
-                                                                                                Navigator
-                                                                                                    .pop(
-                                                                                                    context),
-                                                                                            text: 'Close',
-                                                                                            width: 150,
-                                                                                            height: 40,
-                                                                                            borderRadius: 4,
-                                                                                            fontSize: 18,
-                                                                                            color: MyColors
-                                                                                                .purpleColor),
-                                                                                        hSizedBox
-                                                                                      ],
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              )
-                                                                            ],
-                                                                          ),
-                                                                    );
-                                                                  }
-                                                                  else{
-                                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                                         SnackBar(content: Text('${res['maessage']}')));
-                                                                  }
-
-                                                          }
-
-
-
-
-                                                                },
-                                                            text: 'Submit',
-                                                            width: 150,
-                                                            height: 40,
-                                                            borderRadius: 4,
-                                                            fontSize: 18,
-                                                            color: MyColors
-                                                                .purpleColor))
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                              children: [
+                                RoundEdgedButton(text: 'View Images',
+                                  width: 260,
+                                  height: 44,
+                                  borderRadius: 4,
+                                  fontSize: 16,
+                                  color: MyColors.purpleColor,
+                                  verticalPadding: 4,
+                                  horizontalPadding: 4,
+                                  onTap: (){
+                                    push(context: context, screen: ViewOnlinePage(damId: widget.damId.toString(), damName:damDetails?['name'],));
+                                  },),
+                                hSizedBox,
+                                RoundEdgedButton(text: 'Download Selected Images',
+                                  width: 260,
+                                  height: 44,
+                                  borderRadius: 4,
+                                  fontSize: 16,
+                                  color: MyColors.purpleColor,
+                                  verticalPadding: 4,
+                                  horizontalPadding: 0,
+                                  onTap: (){
+                                    push(context: context, screen: ViewOnlinePage(damId: widget.damId.toString(), damName:damDetails?['name'],withDownloadOption: true,));
+                                  },),
+                                hSizedBox,
+                                RoundEdgedButton(
+                                  onTap: () => showDialog<String>(
+                                    context: context,
+                                    // builder: (BuildContext context) => SimpleDialog(
+                                    //   backgroundColor: Colors.transparent,
+                                    //   // title:const Text('GeeksforGeeks'),
+                                    //   children: [
+                                    //     Container(
+                                    //       width: 450,
+                                    //       decoration: BoxDecoration(
+                                    //         borderRadius: BorderRadius.circular(5),
+                                    //         color: Color(0xFEFAFAFA),
+                                    //       ),
+                                    //       child: Column(
+                                    //         children: [
+                                    //           Column(
+                                    //             crossAxisAlignment:
+                                    //                 CrossAxisAlignment.start,
+                                    //             children: [
+                                    //               Container(
+                                    //                 height: 55,
+                                    //                 decoration: BoxDecoration(
+                                    //                     color: MyColors.purpleColor,
+                                    //                     borderRadius: BorderRadius.only(
+                                    //                       topLeft: Radius.circular(5),
+                                    //                       topRight: Radius.circular(5),
+                                    //                     )),
+                                    //                 width: MediaQuery.of(context)
+                                    //                     .size
+                                    //                     .width,
+                                    //                 child: Stack(
+                                    //                   alignment: Alignment.center,
+                                    //                   children: [
+                                    //                     MainHeadingText(
+                                    //                       text: 'Download Form',
+                                    //                       textAlign: TextAlign.center,
+                                    //                       fontSize: 18,
+                                    //                       color: MyColors.whiteColor,
+                                    //                     ),
+                                    //                     Positioned(
+                                    //                       right: 5,
+                                    //                       child: GestureDetector(
+                                    //                         onTap: (){
+                                    //                           Navigator.pop(context);
+                                    //                         },
+                                    //                         child: Icon(
+                                    //                           Icons.close,
+                                    //                           color:
+                                    //                               MyColors.whiteColor,
+                                    //                         ),
+                                    //                       ),
+                                    //                     )
+                                    //                   ],
+                                    //                 ),
+                                    //               ),
+                                    //               Padding(
+                                    //                 padding: EdgeInsets.all(16),
+                                    //                 child: Column(
+                                    //                   crossAxisAlignment:
+                                    //                       CrossAxisAlignment.start,
+                                    //                   children: [
+                                    //                     MainHeadingText(
+                                    //                       text:
+                                    //                           'Please enter your personal detail',
+                                    //                       fontSize: 15,
+                                    //                     ),
+                                    //                     hSizedBox2,
+                                    //                     CustomTextField(
+                                    //                         controller: name,
+                                    //                         labelfontfamily: 'regular',
+                                    //                         height: 40,
+                                    //                         borderradius: 5,
+                                    //                         label: 'Name',
+                                    //                         showlabel: true,
+                                    //                         hintText:
+                                    //                             'Please enter your name'),
+                                    //                     hSizedBox,
+                                    //                     CustomTextField(
+                                    //                         controller: email,
+                                    //                         labelfontfamily: 'regular',
+                                    //                         height: 40,
+                                    //                         borderradius: 5,
+                                    //                         label: 'Email',
+                                    //                         showlabel: true,
+                                    //                         hintText:
+                                    //                             'Please enter your Email id'),
+                                    //                     hSizedBox,
+                                    //                     CustomTextField(
+                                    //                         controller: idsTextController,
+                                    //                         labelfontfamily: 'regular',
+                                    //                         height: 40,
+                                    //                         borderradius: 5,
+                                    //                         label: 'Dam/Weir Ids',
+                                    //                         showlabel: true,
+                                    //                         hintText:
+                                    //                             'Ex: (21,22)'),
+                                    //                     // hSizedBox,
+                                    //                     // CustomTextField(
+                                    //                     //     controller: phone,
+                                    //                     //     labelfontfamily: 'regular',
+                                    //                     //     height: 40,
+                                    //                     //     borderradius: 5,
+                                    //                     //     label: 'Phone Number',
+                                    //                     //     showlabel: true,
+                                    //                     //      keyboardType: TextInputType.number,
+                                    //                     //     hintText:
+                                    //                     //         'Please enter your phone number'),
+                                    //                     hSizedBox2,
+                                    //                     Center(
+                                    //                         child: RoundEdgedButton(
+                                    //
+                                    //                             onTap: ()  async{
+                                    //                             String pattern =
+                                    //                             r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                                    //                             RegExp regex = new RegExp(pattern);
+                                    //                         String phonePattern =
+                                    //                         r'^(\+?\d{1,4}[\s-])?(?!0+\s+,?$)\d{10}\s*,?$';
+                                    //                         RegExp pnumber = new RegExp(phonePattern);
+                                    //                           if(name.text==""){
+                                    //                             ScaffoldMessenger.of(context).showSnackBar(
+                                    //                             const SnackBar(content: Text('Please enter your name.')));
+                                    //                           }
+                                    //                           else if(email.text==''){
+                                    //                             ScaffoldMessenger.of(context).showSnackBar(
+                                    //                                 const SnackBar(content: Text('Please enter your email.')));
+                                    //                           }
+                                    //                             else if (!regex.hasMatch(email.text)) {
+                                    //                               ScaffoldMessenger.of(context).showSnackBar(
+                                    //                                  const SnackBar(content: Text('Please enter valid email.')));
+                                    //                          }else if(idsTextController.text==""){
+                                    //                             ScaffoldMessenger.of(context).showSnackBar(
+                                    //                                 const SnackBar(content: Text('Please enter Dam Ids.')));
+                                    //                           }
+                                    //                             //      else if(phone.text==''){
+                                    //                             //   ScaffoldMessenger.of(context).showSnackBar(
+                                    //                             //       const SnackBar(content: Text('Please enter your phone number.')));
+                                    //                             // }
+                                    //                             //     else if (!pnumber.hasMatch(phone.text)) {
+                                    //                             //           ScaffoldMessenger.of(context).showSnackBar(
+                                    //                             //         const SnackBar(content: Text('Please enter valid phone number.')));
+                                    //                             //      }
+                                    //
+                                    //                                 else {
+                                    //
+                                    //                                   Map<String, dynamic> request={
+                                    //                                     'dam_id':widget.damId.toString(),
+                                    //                                     'name':name.text,
+                                    //                                     'email':email.text,
+                                    //                                     'dam_image_id': idsTextController.text,
+                                    //                                     // 'phone':phone.text
+                                    //                                   };
+                                    //                                   print("request-------------${request}");
+                                    //                                   print("api-------------${ApiUrls.downloadform}");
+                                    //
+                                    //                                   var res = await Webservices.postData(apiUrl: ApiUrls.downloadform, request: request);
+                                    //                                   print("res-------------${res}");
+                                    //
+                                    //                                   if(res['status'].toString()=="1"){
+                                    //                                     Navigator.pop(
+                                    //                                         context);
+                                    //                                     showDialog<
+                                    //                                         String>(
+                                    //                                       context:
+                                    //                                       context,
+                                    //                                       builder: (
+                                    //                                           BuildContext
+                                    //                                           context) =>
+                                    //                                           SimpleDialog(
+                                    //                                             backgroundColor:
+                                    //                                             Colors
+                                    //                                                 .transparent,
+                                    //                                             children: [
+                                    //                                               Container(
+                                    //                                                 width:
+                                    //                                                 450,
+                                    //                                                 decoration:
+                                    //                                                 BoxDecoration(
+                                    //                                                   borderRadius:
+                                    //                                                   BorderRadius
+                                    //                                                       .circular(
+                                    //                                                       5),
+                                    //                                                   color: Color(
+                                    //                                                       0xFEFAFAFA),
+                                    //                                                 ),
+                                    //                                                 padding:
+                                    //                                                 EdgeInsets
+                                    //                                                     .all(
+                                    //                                                     16),
+                                    //                                                 child:
+                                    //                                                 Column(
+                                    //                                                   children: [
+                                    //                                                     Column(
+                                    //                                                       children: [
+                                    //                                                         Image
+                                    //                                                             .asset(
+                                    //                                                           'assets/images/check.png',
+                                    //                                                           width: 150,
+                                    //                                                         ),
+                                    //                                                         hSizedBox2,
+                                    //                                                         MainHeadingText(
+                                    //                                                           fontFamily: 'light',
+                                    //                                                           height: 1.3,
+                                    //                                                           text: 'Thank you ! Your Request has been sent successfully, You will receive mail soon with all data.',
+                                    //                                                           fontSize: 16,
+                                    //                                                           color: MyColors
+                                    //                                                               .headingcolor,
+                                    //                                                           textAlign: TextAlign
+                                    //                                                               .center,
+                                    //                                                         ),
+                                    //                                                         hSizedBox2,
+                                    //                                                         RoundEdgedButton(
+                                    //                                                             onTap: () =>
+                                    //                                                                 Navigator
+                                    //                                                                     .pop(
+                                    //                                                                     context),
+                                    //                                                             text: 'Close',
+                                    //                                                             width: 150,
+                                    //                                                             height: 40,
+                                    //                                                             borderRadius: 4,
+                                    //                                                             fontSize: 18,
+                                    //                                                             color: MyColors
+                                    //                                                                 .purpleColor),
+                                    //                                                         hSizedBox
+                                    //                                                       ],
+                                    //                                                     ),
+                                    //                                                   ],
+                                    //                                                 ),
+                                    //                                               )
+                                    //                                             ],
+                                    //                                           ),
+                                    //                                     );
+                                    //                                   }
+                                    //                                   else{
+                                    //                                     ScaffoldMessenger.of(context).showSnackBar(
+                                    //                                          SnackBar(content: Text('${res['maessage']}')));
+                                    //                                   }
+                                    //
+                                    //                           }
+                                    //
+                                    //
+                                    //
+                                    //
+                                    //                                 },
+                                    //                             text: 'Submit',
+                                    //                             width: 150,
+                                    //                             height: 40,
+                                    //                             borderRadius: 4,
+                                    //                             fontSize: 18,
+                                    //                             color: MyColors
+                                    //                                 .purpleColor))
+                                    //                   ],
+                                    //                 ),
+                                    //               )
+                                    //             ],
+                                    //           ),
+                                    //         ],
+                                    //       ),
+                                    //     )
+                                    //   ],
+                                    // ),
+                                    builder: (BuildContext context) => DownloadFormDialog(damId: widget.damId.toString()),
+                                  ),
+                                  text: 'Download All Images',
+                                  width: 260,
+                                  height: 40,
+                                  borderRadius: 4,
+                                  fontSize: 16,
+                                  verticalPadding: 4,
+                                  horizontalPadding: 0,
+                                  color: MyColors.purpleColor,
                                 ),
-                              ),
-                              text: 'Download',
-                              width: 170,
-                              height: 40,
-                              borderRadius: 4,
-                              fontSize: 18,
-                              color: MyColors.purpleColor,
+                              ],
                             ),
                           ],
                         )
