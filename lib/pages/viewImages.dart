@@ -341,7 +341,7 @@ class _ViewOnlinePageState extends State<ViewOnlinePage> {
                                                       Images: ImgDetails[j]
                                                           ['images'],
                                                       initialIndex: i,
-                                                      damName: widget.damName,
+                                                      damName: widget.damName, isNetwork: true,
                                                     ));
                                               },
                                               child: Container(

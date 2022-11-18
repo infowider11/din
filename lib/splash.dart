@@ -24,7 +24,7 @@ class SplashScreenPage extends StatefulWidget {
 class _SplashScreenPageState extends State<SplashScreenPage> {
 
   getCurrentLocation()async{
-    currentPosition = await  determinePosition();
+    // currentPosition = await  determinePosition();
     await getFiltersList();
     await getDams();
     pushReplacement(context: context, screen: HomePage());

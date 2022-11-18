@@ -17,7 +17,9 @@ import 'package:din/widgets/customloader.dart';
 import '../widgets/customtextfield.dart';
 
 class MapViewHomePage extends StatefulWidget {
-  const MapViewHomePage({required Key key}) : super(key: key);
+  final bool isViewMap ;
+  final Function()? ViewMap ;
+  const MapViewHomePage({required Key key,required this.isViewMap,this.ViewMap}) : super(key: key);
 
   @override
   State<MapViewHomePage> createState() => MapViewHomePageState();
@@ -34,19 +36,19 @@ class MapViewHomePageState extends State<MapViewHomePage>
   @override
   bool get wantKeepAlive => true;
 
-
-  getCurrentLocation()async{
-    currentPosition = await  determinePosition();
+  getCurrentLocation() async {
+    currentPosition = await determinePosition();
     print('the current location is ${currentPosition?.longitude}');
     // getDams();
   }
 
+  resetLocation(LatLng latLng, {double? zoom}) async {
+    mapController.move(latLng, zoom ?? 8);
 
-  resetLocation(LatLng latLng,{ double? zoom})async{
-    mapController.move(latLng, zoom??8);
     print('the current location is ${currentPosition?.longitude}');
     // getDams();
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -63,17 +65,17 @@ class MapViewHomePageState extends State<MapViewHomePage>
     return load
         ? CustomLoader()
         : Stack(
-          children: [
-            Column(
+            children: [
+              Column(
                 children: [
                   Expanded(
                       child: FlutterMap(
-                        mapController: mapController,
+                    mapController: mapController,
                     options: MapOptions(
                       // center: LatLng(currentPosition?.latitude??11.415018, currentPosition?.longitude??5.28),
                       // center: LatLng(9.0820,  8.6753),
                       // center: LatLng(30, 40),
-                      center: LatLng(9.35962,  8.76361),
+                      center: LatLng(9.35962, 8.76361),
 
                       zoom: 11,
                     ),
@@ -103,18 +105,47 @@ class MapViewHomePageState extends State<MapViewHomePage>
                   )),
                 ],
               ),
-            Positioned(
-              bottom: 16, right: 16,
-              child: Tooltip(
-                message: 'Reset location',
-                child: IconButton(onPressed: (){
+              if(widget.isViewMap)
+              Positioned(
+                top: 16,
+                right: 16,
 
-                  
-    resetLocation(LatLng(9.0820,  8.6753));
-    }, icon: Icon(Icons.refresh, color: Colors.black, size: 26,),),
-              ),
-            )
-          ],
-        );
+                child: Tooltip(
+                  message: 'Reset location',
+                  child:  GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: MyColors.primaryColor,
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        child: MainHeadingText(text: 'View Map', fontSize: 12, color: MyColors.whiteColor, fontFamily: 'semibold',),
+                      ),
+                      onTap:widget.ViewMap
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(damId: damList[i]['id'],))
+                          )
+
+                  )
+                ),
+
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: Tooltip(
+                  message: 'Reset location',
+                  child: IconButton(
+                    onPressed: () {
+                      resetLocation(LatLng(9.0820, 8.6753));
+                    },
+                    icon: Icon(
+                      Icons.refresh,
+                      color: Colors.black,
+                      size: 26,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          );
   }
 }
