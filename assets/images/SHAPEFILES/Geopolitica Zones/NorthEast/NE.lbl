@@ -1,0 +1,11 @@
+<MapWindow OcxVersion="5.2.0.0" FileType="Labels" FileVersion="2" FilenamesEncoding="utf8">
+  <Labels Count="7" RotationSaved="0" TextSaved="1" OffsetXSaved="0" OffsetYSaved="0">
+    <Label X="12.404939" Y="9.330956" Name="" />
+    <Label X="9.987985" Y="10.780214" Name="" />
+    <Label X="13.149965" Y="11.883589" Name="" />
+    <Label X="11.183420" Y="10.373142" Name="" />
+    <Label X="9.516162" Y="9.224273" Name="" />
+    <Label X="10.779771" Y="8.017092" Name="" />
+    <Label X="11.430955" Y="12.297611" Name="" />
+  </Labels>
+</MapWindow>
