@@ -1,3 +1,4 @@
+import 'package:din/constants/constans.dart';
 import 'package:din/constants/global_keys.dart';
 import 'package:din/constants/image_urls.dart';
 import 'package:din/pages/marker_info_page.dart';
@@ -36,16 +37,16 @@ class MapViewHomePageState extends State<MapViewHomePage>
   @override
   bool get wantKeepAlive => true;
 
-  getCurrentLocation() async {
-    currentPosition = await determinePosition();
-    print('the current location is ${currentPosition?.longitude}');
-    // getDams();
-  }
+  // getCurrentLocation() async {
+  //   currentPosition = await determinePosition();
+  //   print('the current location is ${currentPosition?.longitude}');
+  //   // getDams();
+  // }
 
   resetLocation(LatLng latLng, {double? zoom}) async {
-    mapController.move(latLng, zoom ?? 8);
+    mapController.move(latLng, zoom ?? MyGlobalConstants.initialZoomLevel);
 
-    print('the current location is ${currentPosition?.longitude}');
+    // print('the current location is ${currentPosition?.longitude}');
     // getDams();
   }
 
@@ -61,7 +62,7 @@ class MapViewHomePageState extends State<MapViewHomePage>
   Widget build(BuildContext context) {
     print('the length is ${damList.length}');
     print('the m length is ${markers.length}');
-    print('the current location is ${currentPosition?.longitude}');
+    // print('the current location is ${currentPosition?.longitude}');
     return load
         ? CustomLoader()
         : Stack(
@@ -75,9 +76,9 @@ class MapViewHomePageState extends State<MapViewHomePage>
                       // center: LatLng(currentPosition?.latitude??11.415018, currentPosition?.longitude??5.28),
                       // center: LatLng(9.0820,  8.6753),
                       // center: LatLng(30, 40),
-                      center: LatLng(9.35962, 8.76361),
+                      center: MyGlobalConstants.initialLocation,
 
-                      zoom: 11,
+                      zoom: MyGlobalConstants.initialZoomLevel,
                     ),
                     nonRotatedChildren: [],
                     children: [
@@ -111,7 +112,7 @@ class MapViewHomePageState extends State<MapViewHomePage>
                 right: 16,
 
                 child: Tooltip(
-                  message: 'Reset location',
+                  message: 'Tap to View Map Images',
                   child:  GestureDetector(
                       child: Container(
                         decoration: BoxDecoration(
@@ -149,3 +150,10 @@ class MapViewHomePageState extends State<MapViewHomePage>
           );
   }
 }
+
+
+
+
+
+
+

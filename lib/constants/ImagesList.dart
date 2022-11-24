@@ -1,6 +1,6 @@
 import 'map_images_urls.dart';
 
-List MapImages = [
+List kMapImages = [
 
   {
     "id": 9,

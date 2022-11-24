@@ -10,7 +10,6 @@ import 'package:din/functions/get_current_location.dart';
 import 'package:din/pages/about_us_page.dart';
 import 'package:din/pages/grid_view_page.dart';
 import 'package:din/pages/list_view_home_page.dart';
-import 'package:din/pages/map_page.dart';
 import 'package:din/pages/map_view_home_page.dart';
 import 'package:din/pages/marker_info_page.dart';
 import 'package:din/pages/zoomImg.dart';
@@ -29,6 +28,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
 import 'constants/ImagesList.dart';
+import 'constants/constans.dart';
 import 'constants/global_functions.dart';
 import 'constants/global_keys.dart';
 import 'constants/map_images_urls.dart';
@@ -47,13 +47,44 @@ class _HomePageState extends State<HomePage>
   // bool isChecked = false;
   TextEditingController email = TextEditingController();
   bool load = false;
-  bool showMapHydro = false;
-  bool showMapState = false;
-  bool showMapRiver = false;
-  bool showMapGeo = false;
-  bool showMap = false;
+
+  // bool showMap = false;
   List ViewFilterImg = [];
-  List ImagesList = [];
+
+  clearFilters()async{
+    _scaffoldKey.currentState?.closeDrawer();
+    selectedDamCategories.clear();
+    selectedkdamBakamType.clear();
+    selectedDamTypes.clear();
+    selectedDamHydrologicalArea.clear();
+    selectedDamRiverBasin.clear();
+    selectedDamGeoPoliticalZone.clear();
+    selectedDamState.clear();
+     showMapHydro = false;
+     showMapState = false;
+     showMapRiver = false;
+     showMapGeo = false;
+    typeUsageStaticMap = {
+      'fishery_fishing': 0,
+      'livestock': 0,
+      'pollution_control': 0,
+      'recreation': 0,
+      'hydro_electricity': 0,
+      'flood_control': 0,
+      'water_Supply': 0,
+      'irrigation': 0,
+    };
+
+    try{
+      MyGlobalKeys.mapViewPageKey.currentState!.resetLocation(MyGlobalConstants.initialLocation);
+    }catch(e){
+      print('Error in catch block 2525 $e');
+    }
+    await getDams( request: {});
+    setState(() {
+
+    });
+  }
   Future<void> _showMyDialog(String msg) async {
     return showDialog<void>(
       context: context,
@@ -185,6 +216,60 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
+
+
+  List<Widget> buildTypeUsageUi(){
+    List<Widget> temp = [];
+    typeUsageStaticMap.forEach((key, val) {
+      temp.add(
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Checkbox(
+                  checkColor: Colors.white,
+                  value: val==1,
+                  onChanged: (bool? value) {
+                    print('the val is $val and value is $value');
+                    // isChecked = value;
+                    // kdamCategories[i]['isChecked'] = value;
+                    if (value == true) {
+                      typeUsageStaticMap[key] = 1;
+                    } else {
+                      typeUsageStaticMap[key] = 0;
+                    }
+                    setState(() {
+
+                    });
+                    print('the val is $val and value is $value 111');
+                  },
+                ),
+              ),
+              wSizedBox05,
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: MyGlobalConstants.filterMaxWidth,
+                  minWidth: MyGlobalConstants.filterMinWidth,
+                ),
+                child: MainHeadingText(
+                  text: '${key}',
+                  fontSize: 14,
+                  fontFamily: 'light',
+                ),
+              )
+            ],
+          )
+      );
+    });
+
+
+
+
+        return temp;
+  }
+
   @override
   Widget build(BuildContext context) {
     print(
@@ -224,7 +309,7 @@ class _HomePageState extends State<HomePage>
         ],
       ),
       drawer: Drawer(
-        // width:MediaQuery.of(context).size.width-164,
+        width:MediaQuery.of(context).size.width>700?650:MediaQuery.of(context).size.width>500?450:MediaQuery.of(context).size.width-80,
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
         // space to fit everything.
@@ -266,43 +351,56 @@ class _HomePageState extends State<HomePage>
                               fontSize: 16,
                             ),
                             hSizedBox,
-                            for (int i = 0; i < kdamBakamType.length; i++)
-                              Row(
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
                                 children: [
-                                  SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Checkbox(
-                                      checkColor: Colors.white,
-                                      value: selectedkdamBakamType[
-                                              kdamBakamType[i]['id']] ??
-                                          false,
-                                      onChanged: (bool? value) {
-                                        if (value == true) {
-                                          selectedkdamBakamType.clear();
-                                          selectedkdamBakamType[kdamBakamType[i]
-                                              ['id']] = value;
-                                        } else {
-                                          selectedkdamBakamType
-                                              .remove(kdamBakamType[i]['id']);
-                                        }
-                                        setState(() {
-                                          // isChecked = value;
-                                          // kdamCategories[i]['isChecked'] = value;
-                                        });
-                                      },
+                                  for (int i = 0; i < kdamBakamType.length; i++)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: Checkbox(
+                                            checkColor: Colors.white,
+                                            value: selectedkdamBakamType[
+                                            kdamBakamType[i]['id']] ??
+                                                false,
+                                            onChanged: (bool? value) {
+                                              if (value == true) {
+                                                selectedkdamBakamType.clear();
+                                                selectedkdamBakamType[kdamBakamType[i]
+                                                ['id']] = value;
+                                              } else {
+                                                selectedkdamBakamType
+                                                    .remove(kdamBakamType[i]['id']);
+                                              }
+                                              setState(() {
+                                                // isChecked = value;
+                                                // kdamCategories[i]['isChecked'] = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        wSizedBox05,
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: MyGlobalConstants.filterMaxWidth,
+                                            minWidth: MyGlobalConstants.filterMinWidth,
+                                          ),
+                                          child: MainHeadingText(
+                                            text: '${kdamBakamType[i]['name']}',
+                                            fontSize: 14,
+                                            fontFamily: 'light',
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  wSizedBox05,
-                                  Expanded(
-                                    child: MainHeadingText(
-                                      text: '${kdamBakamType[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    ),
-                                  )
                                 ],
                               ),
+                            )
+
                           ],
                         ),
                         if (!selectedkdamBakamType.containsKey(2) ||
@@ -315,41 +413,57 @@ class _HomePageState extends State<HomePage>
                                 fontSize: 16,
                               ),
                               hSizedBox,
-                              for (int i = 0; i < kdamCategories.length; i++)
-                                Row(
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Wrap(
                                   children: [
-                                    SizedBox(
-                                      width: 40,
-                                      height: 40,
-                                      child: Checkbox(
-                                        checkColor: Colors.white,
-                                        value: selectedDamCategories[
-                                                kdamCategories[i]['id']] ??
-                                            false,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            // isChecked = value;
-                                            // kdamCategories[i]['isChecked'] = value;
-                                            if (value == true) {
-                                              selectedDamCategories[
-                                                      kdamCategories[i]['id']] =
-                                                  value;
-                                            } else {
-                                              selectedDamCategories.remove(
-                                                  kdamCategories[i]['id']);
-                                            }
-                                          });
-                                        },
+                                    for (int i = 0; i < kdamCategories.length; i++)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: Checkbox(
+                                              checkColor: Colors.white,
+                                              value: selectedDamCategories[
+                                              kdamCategories[i]['id']] ??
+                                                  false,
+                                              onChanged: (bool? value) {
+                                                setState(() {
+                                                  // isChecked = value;
+                                                  // kdamCategories[i]['isChecked'] = value;
+                                                  if (value == true) {
+                                                    selectedDamCategories[
+                                                    kdamCategories[i]['id']] =
+                                                        value;
+                                                  } else {
+                                                    selectedDamCategories.remove(
+                                                        kdamCategories[i]['id']);
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          wSizedBox05,
+                                          Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth: MyGlobalConstants.filterMaxWidth,
+                                              minWidth: MyGlobalConstants.filterMinWidth,
+                                            ),
+                                            child: MainHeadingText(
+                                              text: '${kdamCategories[i]['name']}',
+                                              fontSize: 14,
+                                              fontFamily: 'light',
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                    wSizedBox05,
-                                    MainHeadingText(
-                                      text: '${kdamCategories[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    )
+
                                   ],
                                 ),
+                              ),
+
                             ],
                           ),
                         if (!selectedkdamBakamType.containsKey(2) ||
@@ -363,44 +477,78 @@ class _HomePageState extends State<HomePage>
                                 fontSize: 16,
                               ),
                               hSizedBox,
-                              for (int i = 0; i < kdamTypes.length; i++)
-                                Row(
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Wrap(
                                   children: [
-                                    SizedBox(
-                                      width: 40,
-                                      height: 40,
-                                      child: Checkbox(
-                                        checkColor: Colors.white,
-                                        value: selectedDamTypes[kdamTypes[i]
-                                                ['id']] ??
-                                            false,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            // isChecked = value;
-                                            // kdamCategories[i]['isChecked'] = value;
-                                            if (value == true) {
-                                              selectedDamTypes[kdamTypes[i]
-                                                  ['id']] = value;
-                                            } else {
-                                              selectedDamTypes
-                                                  .remove(kdamTypes[i]['id']);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    wSizedBox05,
-                                    Expanded(
-                                      child: MainHeadingText(
-                                        text: '${kdamTypes[i]['name']}',
-                                        fontSize: 14,
-                                        fontFamily: 'light',
-                                      ),
-                                    )
+                                    for (int i = 0; i < kdamTypes.length; i++)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            width: 40,
+                                            height: 40,
+                                            child: Checkbox(
+                                              checkColor: Colors.white,
+                                              value: selectedDamTypes[kdamTypes[i]
+                                              ['id']] ??
+                                                  false,
+                                              onChanged: (bool? value) {
+                                                setState(() {
+                                                  // isChecked = value;
+                                                  // kdamCategories[i]['isChecked'] = value;
+                                                  if (value == true) {
+                                                    selectedDamTypes[kdamTypes[i]
+                                                    ['id']] = value;
+                                                  } else {
+                                                    selectedDamTypes
+                                                        .remove(kdamTypes[i]['id']);
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          wSizedBox05,
+                                          Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth: MyGlobalConstants.filterMaxWidth,
+                                              minWidth: MyGlobalConstants.filterMinWidth,
+                                            ),
+                                            child: MainHeadingText(
+                                              text: '${kdamTypes[i]['name']}',
+                                              fontSize: 14,
+                                              fontFamily: 'light',
+                                            ),
+                                          )
+                                        ],
+                                      )
                                   ],
-                                )
+                                ),
+                              )
+
                             ],
                           ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            hSizedBox2,
+                            MainHeadingText(
+                              text: 'USAGE',
+                              fontSize: 16,
+                            ),
+                            hSizedBox,
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
+                                children: [
+                                  ...buildTypeUsageUi(),
+
+                                ],
+                              ),
+                            )
+
+                          ],
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -458,50 +606,64 @@ class _HomePageState extends State<HomePage>
                               ],
                             ),
                             hSizedBox,
-                            for (int i = 0;
-                                i < kdamHydrologicalArea.length;
-                                i++)
-                              Row(
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
                                 children: [
-                                  SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Checkbox(
-                                      checkColor: Colors.white,
-                                      value: selectedDamHydrologicalArea[
-                                              kdamHydrologicalArea[i]['id']] ??
-                                          false,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          // isChecked = value;
-                                          // kdamCategories[i]['isChecked'] = value;
-                                          if (value == true) {
-                                            selectedDamHydrologicalArea[
-                                                kdamHydrologicalArea[i]
-                                                    ['id']] = value;
-                                          } else {
-                                            selectedDamHydrologicalArea.remove(
-                                                kdamHydrologicalArea[i]['id']);
-                                            if (selectedDamHydrologicalArea.keys.toList().length ==0) {
-                                              showMapHydro=false;
+                                  for (int i = 0;
+                                  i < kdamHydrologicalArea.length;
+                                  i++)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: Checkbox(
+                                            checkColor: Colors.white,
+                                            value: selectedDamHydrologicalArea[
+                                            kdamHydrologicalArea[i]['id']] ??
+                                                false,
+                                            onChanged: (bool? value) {
+                                              setState(() {
+                                                // isChecked = value;
+                                                // kdamCategories[i]['isChecked'] = value;
+                                                if (value == true) {
+                                                  selectedDamHydrologicalArea[
+                                                  kdamHydrologicalArea[i]
+                                                  ['id']] = value;
+                                                } else {
+                                                  selectedDamHydrologicalArea.remove(
+                                                      kdamHydrologicalArea[i]['id']);
+                                                  if (selectedDamHydrologicalArea.keys.toList().length ==0) {
+                                                    showMapHydro=false;
 
-                                            }
-                                          }
-                                        });
-                                      },
+                                                  }
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        wSizedBox05,
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: MyGlobalConstants.filterMaxWidth,
+                                            minWidth: MyGlobalConstants.filterMinWidth,
+                                          ),
+                                          child: MainHeadingText(
+                                            text:
+                                            '${kdamHydrologicalArea[i]['name']}',
+                                            fontSize: 14,
+                                            fontFamily: 'light',
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  wSizedBox05,
-                                  Expanded(
-                                    child: MainHeadingText(
-                                      text:
-                                          '${kdamHydrologicalArea[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    ),
-                                  )
+
                                 ],
                               ),
+                            ),
+
                           ],
                         ),
                         Column(
@@ -574,47 +736,61 @@ class _HomePageState extends State<HomePage>
                             //   activeColor: MyColors.primaryColor,
                             //   title: Text('Show Map'),),
                             hSizedBox,
-                            for (int i = 0; i < kdamRiver_basin.length; i++)
-                              Row(
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
                                 children: [
-                                  SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Checkbox(
-                                      checkColor: Colors.white,
-                                      value: selectedDamRiverBasin[
-                                              kdamRiver_basin[i]['id']] ??
-                                          false,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          // isChecked = value;
-                                          // kdamCategories[i]['isChecked'] = value;
-                                          if (value == true) {
-                                            selectedDamRiverBasin[
-                                                    kdamRiver_basin[i]['id']] =
-                                                value;
-                                          } else {
-                                            selectedDamRiverBasin.remove(
-                                                kdamRiver_basin[i]['id']);
-                                            if (selectedDamRiverBasin.keys.toList().length ==0) {
-                                              showMapRiver=false;
+                                  for (int i = 0; i < kdamRiver_basin.length; i++)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: Checkbox(
+                                            checkColor: Colors.white,
+                                            value: selectedDamRiverBasin[
+                                            kdamRiver_basin[i]['id']] ??
+                                                false,
+                                            onChanged: (bool? value) {
+                                              setState(() {
+                                                // isChecked = value;
+                                                // kdamCategories[i]['isChecked'] = value;
+                                                if (value == true) {
+                                                  selectedDamRiverBasin[
+                                                  kdamRiver_basin[i]['id']] =
+                                                      value;
+                                                } else {
+                                                  selectedDamRiverBasin.remove(
+                                                      kdamRiver_basin[i]['id']);
+                                                  if (selectedDamRiverBasin.keys.toList().length ==0) {
+                                                    showMapRiver=false;
 
-                                            }
-                                          }
-                                        });
-                                      },
+                                                  }
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        wSizedBox05,
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: MyGlobalConstants.filterMaxWidth,
+                                            minWidth: MyGlobalConstants.filterMinWidth,
+                                          ),
+                                          child: MainHeadingText(
+                                            text: '${kdamRiver_basin[i]['name']}',
+                                            fontSize: 14,
+                                            fontFamily: 'light',
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  wSizedBox05,
-                                  Expanded(
-                                    child: MainHeadingText(
-                                      text: '${kdamRiver_basin[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    ),
-                                  )
+
                                 ],
                               ),
+                            ),
+
                           ],
                         ),
                         Column(
@@ -687,52 +863,65 @@ class _HomePageState extends State<HomePage>
                             //   activeColor: MyColors.primaryColor,
                             //   title: Text('Show Map'),),
                             hSizedBox,
-                            for (int i = 0;
-                                i < kdamGeo_political_zone.length;
-                                i++)
-                              Row(
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
                                 children: [
-                                  SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Checkbox(
-                                      checkColor: Colors.white,
-                                      value: selectedDamGeoPoliticalZone[
-                                              kdamGeo_political_zone[i]
-                                                  ['id']] ??
-                                          false,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          // isChecked = value;
-                                          // kdamCategories[i]['isChecked'] = value;
-                                          if (value == true) {
-                                            selectedDamGeoPoliticalZone[
-                                                kdamGeo_political_zone[i]
-                                                    ['id']] = value;
-                                          } else {
-                                            selectedDamGeoPoliticalZone.remove(
-                                                kdamGeo_political_zone[i]
-                                                    ['id']);
-                                            if (selectedDamGeoPoliticalZone.keys.toList().length ==0) {
-                                              showMapGeo=false;
+                                  for (int i = 0;
+                                  i < kdamGeo_political_zone.length;
+                                  i++)
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: Checkbox(
+                                            checkColor: Colors.white,
+                                            value: selectedDamGeoPoliticalZone[
+                                            kdamGeo_political_zone[i]
+                                            ['id']] ??
+                                                false,
+                                            onChanged: (bool? value) {
+                                              setState(() {
+                                                // isChecked = value;
+                                                // kdamCategories[i]['isChecked'] = value;
+                                                if (value == true) {
+                                                  selectedDamGeoPoliticalZone[
+                                                  kdamGeo_political_zone[i]
+                                                  ['id']] = value;
+                                                } else {
+                                                  selectedDamGeoPoliticalZone.remove(
+                                                      kdamGeo_political_zone[i]
+                                                      ['id']);
+                                                  if (selectedDamGeoPoliticalZone.keys.toList().length ==0) {
+                                                    showMapGeo=false;
 
-                                            }
-                                          }
-                                        });
-                                      },
+                                                  }
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        wSizedBox05,
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: MyGlobalConstants.filterMaxWidth,
+                                            minWidth: MyGlobalConstants.filterMinWidth,
+                                          ),
+                                          child: MainHeadingText(
+                                            text:
+                                            '${kdamGeo_political_zone[i]['name']}',
+                                            fontSize: 14,
+                                            fontFamily: 'light',
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  wSizedBox05,
-                                  Expanded(
-                                    child: MainHeadingText(
-                                      text:
-                                          '${kdamGeo_political_zone[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    ),
-                                  )
+
                                 ],
                               ),
+                            ),
+
                           ],
                         ),
                         Column(
@@ -804,46 +993,60 @@ class _HomePageState extends State<HomePage>
                             //   activeColor: MyColors.primaryColor,
                             //   title: Text('Show Map'),),
                             hSizedBox,
-                            for (int i = 0; i < kstate.length; i++)
-                              Row(
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Wrap(
                                 children: [
-                                  SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Checkbox(
-                                      checkColor: Colors.white,
-                                      value:
-                                          selectedDamState[kstate[i]['id']] ??
-                                              false,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          // isChecked = value;
-                                          // kdamCategories[i]['isChecked'] = value;
-                                          if (value == true) {
-                                            selectedDamState[kstate[i]['id']] =
-                                                value;
-                                          } else {
-                                            selectedDamState
-                                                .remove(kstate[i]['id']);
-                                            if (selectedDamState.keys.toList().length ==0) {
-                                              showMapState=false;
+                                  for (int i = 0; i < kstate.length; i++)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: Checkbox(
+                                            checkColor: Colors.white,
+                                            value:
+                                            selectedDamState[kstate[i]['id']] ??
+                                                false,
+                                            onChanged: (bool? value) {
+                                              setState(() {
+                                                // isChecked = value;
+                                                // kdamCategories[i]['isChecked'] = value;
+                                                if (value == true) {
+                                                  selectedDamState[kstate[i]['id']] =
+                                                      value;
+                                                } else {
+                                                  selectedDamState
+                                                      .remove(kstate[i]['id']);
+                                                  if (selectedDamState.keys.toList().length ==0) {
+                                                    showMapState=false;
 
-                                            }
-                                          }
-                                        });
-                                      },
+                                                  }
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        wSizedBox05,
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: MyGlobalConstants.filterMaxWidth,
+                                            minWidth: MyGlobalConstants.filterMinWidth,
+                                          ),
+                                          child: MainHeadingText(
+                                            text: '${kstate[i]['name']}',
+                                            fontSize: 14,
+                                            fontFamily: 'light',
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  wSizedBox05,
-                                  Expanded(
-                                    child: MainHeadingText(
-                                      text: '${kstate[i]['name']}',
-                                      fontSize: 14,
-                                      fontFamily: 'light',
-                                    ),
-                                  )
+
                                 ],
                               ),
+                            ),
+
                           ],
                         ),
                         // hSizedBox4,
@@ -1227,108 +1430,108 @@ class _HomePageState extends State<HomePage>
                                   selectedDamState.keys.join(',');
                             }
                             setState(() {});
-
-                            await getDams(request: request);
                             ImagesList = [];
-                            setState(() {});
-                            print(
-                                'list -------------${selectedDamHydrologicalArea.keys.toList()}');
-                            print(
-                                'list -------------${selectedDamRiverBasin.keys.toList()}');
-                            print(
-                                'list -------------${selectedDamGeoPoliticalZone.keys.toList()}');
-                            print(
-                                'list -------------${selectedDamState.keys.toList()}');
+                            await getDams(request: request);
 
-                            if (showMapHydro) {
-                              for (int i = 0;
-                                  i <
-                                      selectedDamHydrologicalArea.keys
-                                          .toList()
-                                          .length;
-                                  i++) {
-                                print(
-                                    'id--------${selectedDamHydrologicalArea.keys.toList()[i]}');
-
-                                for (int j = 0; j < MapImages.length; j++) {
-                                  if (MapImages[j]['mapType'] ==
-                                          'hydrologicalArea' &&
-                                      selectedDamHydrologicalArea.keys
-                                              .toList()[i]
-                                              .toString() ==
-                                          MapImages[j]['id'].toString()) {
-                                    ImagesList.add(MapImages[j]);
-                                  }
-                                }
-                                print('ImagesList--------------${ImagesList}');
-                              }
-                            }
-                            if (showMapRiver) {
-                              for (int i = 0;
-                                  i <
-                                      selectedDamRiverBasin.keys
-                                          .toList()
-                                          .length;
-                                  i++) {
-                                print(
-                                    'id--------${selectedDamRiverBasin.keys.toList()[i]}');
-
-                                for (int j = 0; j < MapImages.length; j++) {
-                                  if (MapImages[j]['mapType'] ==
-                                          'river_basin' &&
-                                      selectedDamRiverBasin.keys
-                                              .toList()[i]
-                                              .toString() ==
-                                          MapImages[j]['id'].toString()) {
-                                    ImagesList.add(MapImages[j]);
-                                  }
-                                }
-                                print('ImagesList--------------${ImagesList}');
-                              }
-                            }
-                            if (showMapGeo) {
-                              for (int i = 0;
-                                  i <
-                                      selectedDamGeoPoliticalZone.keys
-                                          .toList()
-                                          .length;
-                                  i++) {
-                                print(
-                                    'id--------${selectedDamGeoPoliticalZone.keys.toList()[i]}');
-
-                                for (int j = 0; j < MapImages.length; j++) {
-                                  if (MapImages[j]['mapType'] ==
-                                          'geo_political_zone' &&
-                                      selectedDamGeoPoliticalZone.keys
-                                              .toList()[i]
-                                              .toString() ==
-                                          MapImages[j]['id'].toString()) {
-                                    ImagesList.add(MapImages[j]);
-                                  }
-                                }
-                                print('ImagesList--------------${ImagesList}');
-                              }
-                            }
-                            if (showMapState) {
-                              for (int i = 0;
-                                  i < selectedDamState.keys.toList().length;
-                                  i++) {
-                                print(
-                                    'id--------${selectedDamState.keys.toList()[i]}');
-
-                                for (int j = 0; j < MapImages.length; j++) {
-                                  if (MapImages[j]['mapType'] == 'state' &&
-                                      selectedDamState.keys
-                                              .toList()[i]
-                                              .toString() ==
-                                          MapImages[j]['id'].toString()) {
-                                    ImagesList.add(MapImages[j]);
-                                  }
-                                }
-                                print('ImagesList--------------${ImagesList}');
-                              }
-                            }
-                            setState(() {});
+                            // setState(() {});
+                            // print(
+                            //     'list -------------${selectedDamHydrologicalArea.keys.toList()}');
+                            // print(
+                            //     'list -------------${selectedDamRiverBasin.keys.toList()}');
+                            // print(
+                            //     'list -------------${selectedDamGeoPoliticalZone.keys.toList()}');
+                            // print(
+                            //     'list -------------${selectedDamState.keys.toList()}');
+                            //
+                            // if (showMapHydro) {
+                            //   for (int i = 0;
+                            //       i <
+                            //           selectedDamHydrologicalArea.keys
+                            //               .toList()
+                            //               .length;
+                            //       i++) {
+                            //     print(
+                            //         'id--------${selectedDamHydrologicalArea.keys.toList()[i]}');
+                            //
+                            //     for (int j = 0; j < kMapImages.length; j++) {
+                            //       if (kMapImages[j]['mapType'] ==
+                            //               'hydrologicalArea' &&
+                            //           selectedDamHydrologicalArea.keys
+                            //                   .toList()[i]
+                            //                   .toString() ==
+                            //               kMapImages[j]['id'].toString()) {
+                            //         ImagesList.add(kMapImages[j]);
+                            //       }
+                            //     }
+                            //     print('ImagesList--------------${ImagesList}');
+                            //   }
+                            // }
+                            // if (showMapRiver) {
+                            //   for (int i = 0;
+                            //       i <
+                            //           selectedDamRiverBasin.keys
+                            //               .toList()
+                            //               .length;
+                            //       i++) {
+                            //     print(
+                            //         'id--------${selectedDamRiverBasin.keys.toList()[i]}');
+                            //
+                            //     for (int j = 0; j < kMapImages.length; j++) {
+                            //       if (kMapImages[j]['mapType'] ==
+                            //               'river_basin' &&
+                            //           selectedDamRiverBasin.keys
+                            //                   .toList()[i]
+                            //                   .toString() ==
+                            //               kMapImages[j]['id'].toString()) {
+                            //         ImagesList.add(kMapImages[j]);
+                            //       }
+                            //     }
+                            //     print('ImagesList--------------${ImagesList}');
+                            //   }
+                            // }
+                            // if (showMapGeo) {
+                            //   for (int i = 0;
+                            //       i <
+                            //           selectedDamGeoPoliticalZone.keys
+                            //               .toList()
+                            //               .length;
+                            //       i++) {
+                            //     print(
+                            //         'id--------${selectedDamGeoPoliticalZone.keys.toList()[i]}');
+                            //
+                            //     for (int j = 0; j < kMapImages.length; j++) {
+                            //       if (kMapImages[j]['mapType'] ==
+                            //               'geo_political_zone' &&
+                            //           selectedDamGeoPoliticalZone.keys
+                            //                   .toList()[i]
+                            //                   .toString() ==
+                            //               kMapImages[j]['id'].toString()) {
+                            //         ImagesList.add(kMapImages[j]);
+                            //       }
+                            //     }
+                            //     print('ImagesList--------------${ImagesList}');
+                            //   }
+                            // }
+                            // if (showMapState) {
+                            //   for (int i = 0;
+                            //       i < selectedDamState.keys.toList().length;
+                            //       i++) {
+                            //     print(
+                            //         'id--------${selectedDamState.keys.toList()[i]}');
+                            //
+                            //     for (int j = 0; j < kMapImages.length; j++) {
+                            //       if (kMapImages[j]['mapType'] == 'state' &&
+                            //           selectedDamState.keys
+                            //                   .toList()[i]
+                            //                   .toString() ==
+                            //               kMapImages[j]['id'].toString()) {
+                            //         ImagesList.add(kMapImages[j]);
+                            //       }
+                            //     }
+                            //     print('ImagesList--------------${ImagesList}');
+                            //   }
+                            // }
+                            // setState(() {});
                             setState(() {});
                           },
                           height: 40,
@@ -1341,23 +1544,7 @@ class _HomePageState extends State<HomePage>
                       child: RoundEdgedButton(
                           text: 'Reset',
                           onTap: () async {
-                            _scaffoldKey.currentState?.closeDrawer();
-                            selectedDamCategories.clear();
-                            selectedkdamBakamType.clear();
-                            selectedDamTypes.clear();
-                            selectedDamHydrologicalArea.clear();
-                            selectedDamRiverBasin.clear();
-                            selectedDamGeoPoliticalZone.clear();
-                            selectedDamState.clear();
-                            showMapState = false;
-                            showMapRiver = false;
-                            showMapGeo = false;
-                            showMapHydro = false;
-                            ImagesList=[];
-
-
-                            await getDams();
-                            setState(() {});
+                            await clearFilters();
                           },
                           height: 40,
                           borderRadius: 4,
@@ -1641,44 +1828,39 @@ class _HomePageState extends State<HomePage>
                           ),
                         ),
                       )),
+                  wSizedBox05,
+                  Expanded(
+                      flex: 2,
+                      child: GestureDetector(
+                        onTap: ()async{
+                          await clearFilters();
+                        },
+                        child: Tooltip(
+                          message: 'Clear Filters',
+                          child: Center(
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: Color(0xFED9D9D9),
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.close,
+                                    color: MyColors.primaryColor,
+                                    size: 25,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )),
                 ],
               ),
             ),
-            // Padding(
-            //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            //     child: TypeAheadField<Map<String,dynamic>>(
-            //       textFieldConfiguration: TextFieldConfiguration(
-            //         autofocus: true,
-            //         style: TextStyle(color: Colors.black, fontSize: 13, fontFamily: 'regular'),
-            //         decoration: InputDecoration(
-            //             border: OutlineInputBorder(
-            //               borderRadius: BorderRadius.circular(20),
-            //
-            //             ),
-            //             // border: InputBorder.none,
-            //             hintText: 'Search by name, Min 3 Char'),
-            //       ),
-            //       suggestionsCallback: (pattern) async {
-            //
-            //         return await SearchingServices.getSuggestions(pattern);
-            //       },
-            //       itemBuilder: (context, Map<String, dynamic> suggestion) {
-            //         return Container(
-            //           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            //           child: ParagraphText(text: '${suggestion['name']}', color: Colors.black,),
-            //         );
-            //         return ListTile(
-            //           leading: Icon(Icons.shopping_cart),
-            //           title: Text(suggestion['name']??'d'),
-            //           subtitle: Text('\$${suggestion['price']}'),
-            //         );
-            //       },
-            //       onSuggestionSelected: (Map<String, dynamic> suggestion) {
-            //         Navigator.of(context).push<void>(MaterialPageRoute(
-            //             builder: (context) => ProductPage(product: suggestion)));
-            //       },
-            //     ),
-            // ),
             hSizedBox,
 
             Expanded(
@@ -1964,33 +2146,6 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProductPage extends StatelessWidget {
-  final Map<String, dynamic> product;
-
-  ProductPage({required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(50.0),
-        child: Column(
-          children: [
-            Text(
-              this.product['name']!,
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            Text(
-              this.product['price']! + ' USD',
-              style: Theme.of(context).textTheme.subtitle1,
-            )
           ],
         ),
       ),

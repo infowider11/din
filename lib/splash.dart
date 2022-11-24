@@ -26,9 +26,9 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   getCurrentLocation()async{
     // currentPosition = await  determinePosition();
     await getFiltersList();
-    await getDams();
+    await getDams(request: {});
     pushReplacement(context: context, screen: HomePage());
-    print('the current location is ${currentPosition?.longitude}');
+    // print('the current location is ${currentPosition?.longitude}');
   }
   
   

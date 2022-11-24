@@ -1,17 +1,27 @@
+import 'package:din/constants/map_images_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../modals/mapImages.dart';
 import '../pages/marker_info_page.dart';
 import '../services/api_urls.dart';
 import '../services/webservices.dart';
 import '../widgets/CustomTexts.dart';
+import 'ImagesList.dart';
 import 'global_data.dart';
 import 'global_keys.dart';
 import 'image_urls.dart';
 
-getDams({Map<String,dynamic> request = const {}}) async {
+getDams({required Map<String,dynamic> request}) async {
 
+  request['t']='1';
+
+  typeUsageStaticMap.forEach((key, value) {
+    if(value==1){
+      request[key] = '1';
+    }
+  });
 
   var jsonResponse = await Webservices.postData(
    apiUrl:  ApiUrls.getDamsList,
@@ -77,6 +87,60 @@ getDams({Map<String,dynamic> request = const {}}) async {
 
 
   }
+
+  if(showMapHydro){
+    List temp = jsonResponse['data']['hydrologicalArea'];
+    temp.forEach((element) {
+      if(element['status']==1){
+        // MapImages.fromJson(data)
+        for (int j = 0; j < kMapImages.length; j++){
+          if(kMapImages[j]['mapType']=='hydrologicalArea' && kMapImages[j]['id']==element['id']){
+            ImagesList.add(kMapImages[j]);
+          }
+        }
+      }
+    });
+  }
+  if(showMapState){
+    List temp = jsonResponse['data']['state'];
+    temp.forEach((element) {
+      if(element['status']==1){
+        // MapImages.fromJson(data)
+        for (int j = 0; j < kMapImages.length; j++){
+          if(kMapImages[j]['mapType']=='state' && kMapImages[j]['id']==element['id']){
+            ImagesList.add(kMapImages[j]);
+          }
+        }
+      }
+    });
+  }
+  if(showMapRiver){
+    List temp = jsonResponse['data']['river_basin'];
+    temp.forEach((element) {
+      if(element['status']==1){
+        // MapImages.fromJson(data)
+        for (int j = 0; j < kMapImages.length; j++){
+          if(kMapImages[j]['mapType']=='river_basin' && kMapImages[j]['id']==element['id']){
+            ImagesList.add(kMapImages[j]);
+          }
+        }
+      }
+    });
+  }
+  if(showMapGeo){
+    List temp = jsonResponse['data']['geo_political_zone'];
+    temp.forEach((element) {
+      if(element['status']==1){
+        // MapImages.fromJson(data)
+        for (int j = 0; j < kMapImages.length; j++){
+          if(kMapImages[j]['mapType']=='geo_political_zone' && kMapImages[j]['id']==element['id']){
+            ImagesList.add(kMapImages[j]);
+          }
+        }
+      }
+    });
+  }
+
 
 
 

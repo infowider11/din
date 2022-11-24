@@ -244,8 +244,8 @@ class _ZoomImgPageState extends State<ZoomImgPage> {
                                     scrollPhysics: BouncingScrollPhysics(),
                                     builder: (BuildContext context, int index) {
                                       return PhotoViewGalleryPageOptions(
-                                        imageProvider:CachedNetworkImageProvider(item['path']) ,
-                                        // imageProvider:((widget.isNetwork == true)?NetworkImage(item['path']):AssetImage(item['path'])) as ImageProvider,
+                                        // imageProvider: ,
+                                        imageProvider:((widget.isNetwork == true)?CachedNetworkImageProvider(item['path']):AssetImage(item['path'])) as ImageProvider,
                                         // imageProvider: NetworkImage(item['path']),
                                         initialScale: PhotoViewComputedScale.contained * 0.8,
                                         heroAttributes: PhotoViewHeroAttributes(tag: 1),

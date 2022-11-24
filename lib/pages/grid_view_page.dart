@@ -23,7 +23,7 @@ class _GridViewPageState extends State<GridViewPage> {
             children: [
               for(var i = 0; i < damList.length; i++)
                 ResponsiveGridCol(
-                  xs: 6,
+                  xs: MediaQuery.of(context).size.width>500?4:6,
                   child: GestureDetector(
                     // onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewsPage())),
                       child: Container(

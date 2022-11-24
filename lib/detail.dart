@@ -386,19 +386,19 @@ class _DetailPageState extends State<DetailPage> {
                                   ListInfo(
                                       heading: 'Irrigation:',
                                       subheading:
-                                          ' ${damDetails?['irrigation'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['irrigation'] == 1 ? 'Yes' : 'No'}'),
                                   ListInfo(
                                       heading: 'Water Supply:',
                                       subheading:
-                                          ' ${damDetails?['water_Supply'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['water_Supply'] == 1 ? 'Yes' : 'No'}'),
                                   ListInfo(
                                       heading: 'Flood Control:',
                                       subheading:
-                                          ' ${damDetails?['flood_control'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['flood_control'] == 1 ? 'Yes' : 'No'}'),
                                   ListInfo(
                                       heading: 'Hydro Electricity:',
                                       subheading:
-                                          ' ${damDetails?['hydro_electricity'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['hydro_electricity'] == 1 ? 'Yes' : 'No'}'),
                                   ListInfo(
                                       heading: 'Electric Capacity:',
                                       subheading:
@@ -406,19 +406,19 @@ class _DetailPageState extends State<DetailPage> {
                                   ListInfo(
                                       heading: 'Recreation:',
                                       subheading:
-                                          ' ${damDetails?['recreation'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['recreation'] == 1 ? 'Yes' : 'No'}'),
                                   ListInfo(
                                       heading: 'Pollution Control:',
                                       subheading:
-                                          ' ${damDetails?['pollution_control'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['pollution_control'] == 1 ? 'Yes' : 'No'}'),
                                   ListInfo(
                                       heading: 'Livestock:',
                                       subheading:
-                                          ' ${damDetails?['livestock'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['livestock'] == 1 ? 1 : 'No'}'),
                                   ListInfo(
                                       heading: 'Fishery/Fishing:',
                                       subheading:
-                                          ' ${damDetails?['fishery_fishing'] == '1' ? 'Yes' : 'No'}'),
+                                          ' ${damDetails?['fishery_fishing'] == 1 ? 'Yes' : 'No'}'),
                                 ],
                               ),
                             )

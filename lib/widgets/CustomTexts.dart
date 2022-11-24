@@ -9,6 +9,7 @@ class MainHeadingText extends StatelessWidget {
   final double? height;
   final FontWeight? fontWeight;
   final String? fontFamily;
+  final TextOverflow? overflow;
   final TextAlign? textAlign;
   const MainHeadingText({
     Key? key,
@@ -16,6 +17,7 @@ class MainHeadingText extends StatelessWidget {
     this.color,
     this.fontSize,
     this.fontWeight,
+    this.overflow,
     this.fontFamily = 'semibold',
     this.textAlign,
     this.height,
@@ -26,8 +28,10 @@ class MainHeadingText extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign,
+      overflow: overflow,
       style: TextStyle(
         color: color??Colors.black,
+
         // fontWeight:fontWeight??FontWeight.w500,
         fontSize: fontSize??20,
         // fontFamily:
