@@ -1,6 +1,8 @@
 class ApiUrls {
   static const baseUrl =
-      'https://dams.ng/api/';
+      'https://dams.ng/backend/api/';
+      // 'https://dams.ng/api/';
+
   // static const String get_values = baseUrl + 'get_values';
   static const String updateDeviceToken = baseUrl + 'get_values';
   static const String getDamsList = baseUrl + 'dam-management';

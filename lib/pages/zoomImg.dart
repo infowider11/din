@@ -238,7 +238,7 @@ class _ZoomImgPageState extends State<ZoomImgPage> {
                             children: [
                               Container(
 // color:Colors.black,
-                                 height:(MediaQuery.of(context).size.height-84),
+                                 height:(MediaQuery.of(context).size.height-85),
                                 width:MediaQuery.of(context).size.width,
                                   child:  PhotoViewGallery.builder(
                                     scrollPhysics: BouncingScrollPhysics(),

@@ -76,6 +76,7 @@ class MapViewHomePageState extends State<MapViewHomePage>
                       // center: LatLng(currentPosition?.latitude??11.415018, currentPosition?.longitude??5.28),
                       // center: LatLng(9.0820,  8.6753),
                       // center: LatLng(30, 40),
+
                       center: MyGlobalConstants.initialLocation,
 
                       zoom: MyGlobalConstants.initialZoomLevel,
@@ -129,6 +130,8 @@ class MapViewHomePageState extends State<MapViewHomePage>
                   )
                 ),
 
+
+
               Positioned(
                 bottom: 16,
                 right: 16,
@@ -145,7 +148,49 @@ class MapViewHomePageState extends State<MapViewHomePage>
                     ),
                   ),
                 ),
-              )
+              ),
+              Positioned(
+                bottom: 20,
+                left:20,
+                child: Row(
+
+                children: [
+                 GestureDetector(
+                   onTap: (){
+                     mapController.move(mapController.center, mapController.zoom+0.5);
+                   },
+                   child: Container(
+                       padding: EdgeInsets.all(5),
+                       decoration: BoxDecoration(
+                         color: Colors.black.withAlpha(150),
+                         borderRadius: BorderRadius.circular(10)
+                       ),
+
+                       child: Icon(Icons.zoom_in, size: 40, color: MyColors.whiteColor)
+                   ),
+                 ),
+              
+              
+                  wSizedBox2,
+                  GestureDetector(
+                    onTap: (){
+
+                      mapController.move(mapController.center, mapController.zoom-0.5);
+                    },
+                    child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: Colors.black.withAlpha(150),
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+
+                        child: Icon(Icons.zoom_out, size: 40, color: MyColors.whiteColor)
+                    ),
+                  ),
+                  // Icon(Icons.zoom_out, size: 45, color: MyColors.purpleColor)
+                ],
+              ),)
+
             ],
           );
   }

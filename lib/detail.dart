@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:din/constants/colors.dart';
 import 'package:din/constants/navigation.dart';
@@ -104,13 +105,14 @@ class _DetailPageState extends State<DetailPage> {
                                   Stack(
                                     children: [
                                       Container(
-                                        height:230,
+                                        color:Colors.red,
+                                        // height:330,
                                         child:  PhotoViewGallery.builder(
                                           scrollPhysics: const BouncingScrollPhysics(),
                                           builder: (BuildContext context, int index) {
                                             return PhotoViewGalleryPageOptions(
-                                              imageProvider: NetworkImage(item['path']),
-                                              initialScale: PhotoViewComputedScale.contained * 0.8,
+                                              imageProvider: CachedNetworkImageProvider(item['path']),
+                                              // initialScale: PhotoViewComputedScale.contained * 0.8,
                                               heroAttributes: PhotoViewHeroAttributes(tag: 1),
                                             );
                                           },
@@ -160,7 +162,7 @@ class _DetailPageState extends State<DetailPage> {
                         }).toList(),
                         carouselController: carousalController,
                         options: CarouselOptions(
-                            height: 230,
+                            // height: 230,
                             enlargeCenterPage: false,
                             aspectRatio: 1,
                             autoPlay: false,
