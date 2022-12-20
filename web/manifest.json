@@ -5,28 +5,28 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Dams in Nigeria is a web-application showcasing Nigeria&rsquo;s great investment in building dams across the country, it is indeed a national registry of all dams in Nigeria.It provides information on the number of dams in the country. Technical details of each dam are accurately presented, including category, whether large, medium or small; dam type, whether earth fill, rockfill or concrete; volume of material, slope up and slope down, dam height, crest length, width, reservoir area and capacity, uses including water supply, hydropower generation, irrigation, livestock, fishing, fishery and tourism; their hydrological and geographical spread. Other information presented include, dam owners, operators and managers that cut across Federal, State, Local Government, Corporate and Private Organizations. Apart from technical data, the application is rich in images, ranging from satellite image of each dam generated from their coordinates to pictures of the various components of dams such as, embankment, reservoir, spillway, powerhouse, sub-station, etc. Users can download the images that they choose from the application free of charge.The web-app is developed by Hi-Tek Productions and published by the Department of Dams and Reservoir Operations of the Federal Ministry of Water Resources, Nigeria to avail the public, especially investors, the numerous potentials available in Nigeria&rsquo;s water resources such as hydropower generation and irrigation farming. The information presented in the application was carefully gathered, processed and verified by the Federal Ministry of Water Resources and provides an interactive platform for users to engage with the ministry. The data contained in the app, even though current and accurate, is to be continually updated.&nbsp;",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
+            "src": "icons/favicon.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icons/Icon-512.png",
+            "src": "icons/favicon.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "icons/Icon-maskable-192.png",
+            "src": "icons/favicon.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "icons/Icon-maskable-512.png",
+            "src": "icons/favicon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"

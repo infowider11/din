@@ -1,10 +1,10 @@
-import 'package:din/constants/colors.dart';
-import 'package:din/constants/global_functions.dart';
-import 'package:din/constants/sized_box.dart';
-import 'package:din/homepage.dart';
-import 'package:din/services/api_urls.dart';
-import 'package:din/services/webservices.dart';
-import 'package:din/widgets/CustomTexts.dart';
+import 'package:Din/constants/colors.dart';
+import 'package:Din/constants/global_functions.dart';
+import 'package:Din/constants/sized_box.dart';
+import 'package:Din/homepage.dart';
+import 'package:Din/services/api_urls.dart';
+import 'package:Din/services/webservices.dart';
+import 'package:Din/widgets/CustomTexts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -69,7 +69,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset('assets/images/logo.png', fit: BoxFit.fitWidth, width: 160, height: 160,),
-          hSizedBox,
+          vSizedBox,
           MainHeadingText(text: 'Dams in Nigeria', color: MyColors.whiteColor, fontSize: 20, )
         ],
       ),

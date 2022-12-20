@@ -1,4 +1,4 @@
-import 'package:din/constants/global_data.dart';
+import 'package:Din/constants/global_data.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
@@ -50,7 +50,7 @@ class _GridViewPageState extends State<GridViewPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   MainHeadingText(text: '${damList[i]['name']}', fontSize: 15,),
-                                  hSizedBox,
+                                  vSizedBox,
                                   Text.rich(
                                     TextSpan(
                                       text: 'Type: ',
@@ -105,7 +105,7 @@ class _GridViewPageState extends State<GridViewPage> {
                                       ],
                                     ),
                                   ),
-                                  hSizedBox,
+                                  vSizedBox,
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

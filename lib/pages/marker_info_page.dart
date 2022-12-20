@@ -61,7 +61,7 @@ class MarkerInfoWindow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         MainHeadingText(text: '${damInfo['name']}', fontSize: 15,),
-                        hSizedBox,
+                        vSizedBox,
                         Text.rich(
                           TextSpan(
                             text: 'Type: ',
@@ -116,7 +116,7 @@ class MarkerInfoWindow extends StatelessWidget {
                             ],
                           ),
                         ),
-                        hSizedBox,
+                        vSizedBox,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [

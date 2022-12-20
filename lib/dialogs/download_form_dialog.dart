@@ -1,4 +1,4 @@
-import 'package:din/constants/global_keys.dart';
+import 'package:Din/constants/global_keys.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
@@ -82,7 +82,7 @@ class DownloadFormDialog extends StatelessWidget {
                             'Please enter your personal detail',
                             fontSize: 15,
                           ),
-                          hSizedBox2,
+                          vSizedBox2,
                           CustomTextField(
                               controller: name,
                               labelfontfamily: 'regular',
@@ -92,7 +92,7 @@ class DownloadFormDialog extends StatelessWidget {
                               showlabel: true,
                               hintText:
                               'Please enter your name'),
-                          hSizedBox,
+                          vSizedBox,
                           CustomTextField(
                               controller: email,
                               labelfontfamily: 'regular',
@@ -103,7 +103,7 @@ class DownloadFormDialog extends StatelessWidget {
                               hintText:
                               'Please enter your Email id'),
 
-                          hSizedBox2,
+                          vSizedBox2,
                           Center(
                               child: RoundEdgedButton(
 
@@ -194,7 +194,7 @@ class DownloadFormDialog extends StatelessWidget {
                                                               'assets/images/check.png',
                                                               width: 150,
                                                             ),
-                                                            hSizedBox2,
+                                                            vSizedBox2,
                                                             MainHeadingText(
                                                               fontFamily: 'light',
                                                               height: 1.3,
@@ -205,7 +205,7 @@ class DownloadFormDialog extends StatelessWidget {
                                                               textAlign: TextAlign
                                                                   .center,
                                                             ),
-                                                            hSizedBox2,
+                                                            vSizedBox2,
                                                             RoundEdgedButton(
                                                                 onTap: () =>
                                                                     Navigator
@@ -218,7 +218,7 @@ class DownloadFormDialog extends StatelessWidget {
                                                                 fontSize: 18,
                                                                 color: MyColors
                                                                     .purpleColor),
-                                                            hSizedBox
+                                                            vSizedBox
                                                           ],
                                                         ),
                                                       ],

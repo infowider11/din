@@ -90,7 +90,7 @@ class RoundEdgedButton extends StatelessWidget {
               ),
             ),
             if(isIcon)
-            hSizedBox,
+            vSizedBox,
             if(isIcon)
             Icon(iconName, size: 24,)
           ],

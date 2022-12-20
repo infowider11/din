@@ -1,4 +1,4 @@
-import 'package:din/constants/sized_box.dart';
+import 'package:Din/constants/sized_box.dart';
 import 'package:flutter/material.dart';
 
 class ListInfo extends StatelessWidget {
@@ -33,7 +33,7 @@ class ListInfo extends StatelessWidget {
             ],
           ),
         ),
-        hSizedBox05,
+        vSizedBox05,
       ],
     );
   }

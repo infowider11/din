@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:din/constants/navigation.dart';
-import 'package:din/pages/zoomImg.dart';
-import 'package:din/widgets/buttons.dart';
-import 'package:din/widgets/customloader.dart';
+import 'package:Din/constants/navigation.dart';
+import 'package:Din/pages/zoomImg.dart';
+import 'package:Din/widgets/buttons.dart';
+import 'package:Din/widgets/customloader.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -335,14 +335,33 @@ class _ViewOnlinePageState extends State<ViewOnlinePage> {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
+                                                var ivalue=0;
                                                 print(
                                                     'object-----------585--${ImgDetails[j]['images']}');
-                                                push(
+                                                List newImg=[];
+                                                for(int k=0;k<ImgDetails.length;k++){
+                                                for(int l=0;l<ImgDetails[k]['images'].length;l++){
+
+                                                  newImg.add(ImgDetails[k]['images'][l]);
+                                                }
+                                                }
+                                                print('newImds-------------${newImg}');
+                                               for(int m=0;m<newImg.length;m++) {
+                                                 print('newImds----values---------${ImgDetails[j]['images'][i]['id'].toString()}     ${newImg[m]['id'].toString()}');
+
+                                                 if(ImgDetails[j]['images'][i]['id'].toString()==newImg[m]['id'].toString()){
+                                                   ivalue=m;
+                                                   print('ivalue-------------${ivalue}');
+                                                 }
+
+
+                                               }
+
+                                                  push(
                                                     context: context,
                                                     screen: ZoomImgPage(
-                                                      Images: ImgDetails[j]
-                                                          ['images'],
-                                                      initialIndex: i,
+                                                      Images: newImg,
+                                                      initialIndex: ivalue,
                                                       damName: widget.damName, isNetwork: true,
                                                     ));
                                               },
@@ -395,7 +414,7 @@ class _ViewOnlinePageState extends State<ViewOnlinePage> {
                     ),
                   ),
           ),
-          hSizedBox,
+          vSizedBox,
           if(widget.withDownloadOption)
           RoundEdgedButton(
             text: 'Download',
@@ -407,7 +426,7 @@ class _ViewOnlinePageState extends State<ViewOnlinePage> {
               );
             },
           ),
-          hSizedBox,
+          vSizedBox,
         ],
       ),
 

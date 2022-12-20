@@ -1,6 +1,6 @@
-import 'package:din/constants/global_keys.dart';
-import 'package:din/detail.dart';
-import 'package:din/splash.dart';
+import 'package:Din/constants/global_keys.dart';
+import 'package:Din/detail.dart';
+import 'package:Din/splash.dart';
 import 'package:flutter/material.dart';
 
 void main() {

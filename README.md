@@ -1,6 +1,6 @@
 # din
 
-A new Flutter project.
+Din
 
 ## Getting Started
 

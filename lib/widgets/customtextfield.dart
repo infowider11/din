@@ -1,4 +1,4 @@
-import 'package:din/constants/sized_box.dart';
+import 'package:Din/constants/sized_box.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
@@ -32,6 +32,8 @@ class CustomTextField extends StatelessWidget {
   final double paddingsuffix;
   final bool boxshadow;
   final bool showlabel;
+  final bool enable;
+  final bool? islable;
   final bool showlabeltop;
   final Widget? suffix;
   final Function(String?)? onChanged;
@@ -66,6 +68,8 @@ class CustomTextField extends StatelessWidget {
     this.boxshadow=false,
     this.showlabel= false,
     this.showlabeltop= false,
+    this.enable= true,
+    this.islable= true,
     this.onChanged,
      this.suffix,
     this.keyboardType
@@ -85,7 +89,7 @@ class CustomTextField extends StatelessWidget {
               color: labelcolor,
               fontFamily: labelfontfamily,
             ),
-            hSizedBox05
+            vSizedBox05
           ],
         ),
         Stack(
@@ -97,6 +101,7 @@ class CustomTextField extends StatelessWidget {
               height: height,
               margin: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
               decoration: BoxDecoration(
+
                 color: bgColor,
                 border: border?? Border.all(color: bordercolor),
                 // border: Border,
@@ -115,23 +120,28 @@ class CustomTextField extends StatelessWidget {
                   textAlign: textAlign,
                   onChanged: onChanged,
                   keyboardType: keyboardType,
+                  enabled: enable,
+
                   decoration: InputDecoration(
                     hintText: hintText,
                     suffix: suffix,
                     hintStyle: TextStyle(fontSize: fontsize, color: hintcolor, fontFamily: 'regular'),
-                    // border: InputBorder.none ,
+                    border: InputBorder.none ,
                     // focusedBorder: UnderlineInputBorder(
                     //   borderSide: BorderSide(color: inputbordercolor)
                     // ),
+
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: inputbordercolor),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: inputbordercolor),
                     ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: inputbordercolor),
-                    ),
+                    // border: UnderlineInputBorder(
+                    //   borderSide: BorderSide(color: inputbordercolor),
+                    //
+                    // ),
+
                     prefixIcon:prefixIcon==null?null:
                     Padding(
                       padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 8.0,bottom: 08.0),
@@ -267,6 +277,7 @@ class CustomTextFieldwithoutshadow extends StatelessWidget {
             obscureText: obscureText,
             textAlign: textAlign,
             decoration: InputDecoration(
+              border: InputBorder.none,
               hintText: hintText,
               hintStyle: TextStyle(fontSize: fontsize, color: hintcolor,),
               // border: InputBorder.none ,
@@ -279,9 +290,9 @@ class CustomTextFieldwithoutshadow extends StatelessWidget {
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: inputbordercolor),
               ),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(color: inputbordercolor),
-              ),
+              // border: UnderlineInputBorder(
+              //   borderSide: BorderSide(color: inputbordercolor),
+              // ),
 
               prefixIcon:prefixIcon==null?null:
               Padding(

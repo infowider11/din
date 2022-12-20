@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:din/constants/map_images_urls.dart';
+import 'package:Din/constants/map_images_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -353,7 +353,7 @@ class _ZoomImgPageState extends State<ZoomImgPage> {
                           'assets/images/arrow-left.png',
                           width: 45,
                         )),
-                    wSizedBox4,
+                    hSizedBox4,
                     GestureDetector(
                         onTap: () {
                           if (_current == 0) {

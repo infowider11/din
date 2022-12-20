@@ -1,4 +1,4 @@
-import 'package:din/constants/map_images_urls.dart';
+import 'package:Din/constants/map_images_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -41,8 +41,8 @@ getDams({required Map<String,dynamic> request}) async {
         Marker(
           point: LatLng(double.parse(damList[i]['latitude']),
               double.parse(damList[i]['longitude'])),
-          height: 95,
-          width: 100,
+          height: 105,
+          width: 115,
           builder: (context) {
             return GestureDetector(
               onTap: (){

@@ -2,19 +2,19 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:din/constants/colors.dart';
-import 'package:din/constants/navigation.dart';
-import 'package:din/constants/sized_box.dart';
-import 'package:din/dialogs/download_form_dialog.dart';
-import 'package:din/pages/viewImages.dart';
-import 'package:din/services/api_urls.dart';
-import 'package:din/services/webservices.dart';
-import 'package:din/widgets/CustomTexts.dart';
-import 'package:din/widgets/buttons.dart';
-import 'package:din/widgets/custom_circular_image.dart';
-import 'package:din/widgets/customloader.dart';
-import 'package:din/widgets/customtextfield.dart';
-import 'package:din/widgets/info.dart';
+import 'package:Din/constants/colors.dart';
+import 'package:Din/constants/navigation.dart';
+import 'package:Din/constants/sized_box.dart';
+import 'package:Din/dialogs/download_form_dialog.dart';
+import 'package:Din/pages/viewImages.dart';
+import 'package:Din/services/api_urls.dart';
+import 'package:Din/services/webservices.dart';
+import 'package:Din/widgets/CustomTexts.dart';
+import 'package:Din/widgets/buttons.dart';
+import 'package:Din/widgets/custom_circular_image.dart';
+import 'package:Din/widgets/customloader.dart';
+import 'package:Din/widgets/customtextfield.dart';
+import 'package:Din/widgets/info.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -105,8 +105,8 @@ class _DetailPageState extends State<DetailPage> {
                                   Stack(
                                     children: [
                                       Container(
-                                        color:Colors.red,
-                                        // height:330,
+                                        // color:Colors.red,
+                                        height:230,
                                         child:  PhotoViewGallery.builder(
                                           scrollPhysics: const BouncingScrollPhysics(),
                                           builder: (BuildContext context, int index) {
@@ -162,7 +162,7 @@ class _DetailPageState extends State<DetailPage> {
                         }).toList(),
                         carouselController: carousalController,
                         options: CarouselOptions(
-                            // height: 230,
+                            height: 230,
                             enlargeCenterPage: false,
                             aspectRatio: 1,
                             autoPlay: false,
@@ -212,7 +212,7 @@ class _DetailPageState extends State<DetailPage> {
                                     'assets/images/arrow-left.png',
                                     width: 45,
                                   )),
-                              wSizedBox4,
+                              hSizedBox4,
                               GestureDetector(
                                   onTap: () {
                                     if (_current == 0) {
@@ -337,7 +337,7 @@ class _DetailPageState extends State<DetailPage> {
                                 ],
                               ),
                             ),
-                            wSizedBox2,
+                            hSizedBox2,
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,6 +362,10 @@ class _DetailPageState extends State<DetailPage> {
                                       heading: 'Crest Width:',
                                       subheading:
                                           ' ${damDetails?['crest_width']}'),
+                                  ListInfo(
+                                      heading: 'Crest Height:',
+                                      subheading:
+                                          ' ${damDetails?['crest_height']}'),
                                   ListInfo(
                                       heading: 'Crest Length:',
                                       subheading:
@@ -454,7 +458,7 @@ class _DetailPageState extends State<DetailPage> {
                     //       // onPageChanged: onPageChanged,
                     //     )
                     // ),
-                        hSizedBox2,
+                        vSizedBox2,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -472,7 +476,7 @@ class _DetailPageState extends State<DetailPage> {
                                   onTap: (){
                                     push(context: context, screen: ViewOnlinePage(damId: widget.damId.toString(), damName:damDetails?['name'],));
                                   },),
-                                hSizedBox,
+                                vSizedBox,
                                 RoundEdgedButton(text: 'Download Selected Images',
                                   width: 260,
                                   height: 44,
@@ -484,7 +488,7 @@ class _DetailPageState extends State<DetailPage> {
                                   onTap: (){
                                     push(context: context, screen: ViewOnlinePage(damId: widget.damId.toString(), damName:damDetails?['name'],withDownloadOption: true,));
                                   },),
-                                hSizedBox,
+                                vSizedBox,
                                 RoundEdgedButton(
                                   onTap: () => showDialog<String>(
                                     context: context,

@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:din/services/api_urls.dart';
-import 'package:din/services/webservices.dart';
-import 'package:din/widgets/CustomTexts.dart';
-import 'package:din/widgets/appbar.dart';
+import 'package:Din/services/api_urls.dart';
+import 'package:Din/services/webservices.dart';
+import 'package:Din/widgets/CustomTexts.dart';
+import 'package:Din/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'dart:convert' as convert;

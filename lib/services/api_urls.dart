@@ -12,6 +12,9 @@ class ApiUrls {
   static const String getAboutUs = baseUrl + 'about-us';
   static const String downloadform = baseUrl + 'inquiry';
   static const String damImages = baseUrl + 'dam-images';
+  static const String categoryList = baseUrl + 'category-52-list';
+  static const String contactUs = baseUrl + 'contact-us';
+
 
 
 

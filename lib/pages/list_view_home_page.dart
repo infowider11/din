@@ -1,5 +1,5 @@
-import 'package:din/constants/global_data.dart';
-import 'package:din/constants/sized_box.dart';
+import 'package:Din/constants/global_data.dart';
+import 'package:Din/constants/sized_box.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/colors.dart';
@@ -19,7 +19,7 @@ class _ListViewHomePageState extends State<ListViewHomePage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            hSizedBox,
+            vSizedBox,
 
             Table(
 

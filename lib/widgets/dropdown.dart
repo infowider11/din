@@ -9,7 +9,9 @@ class DropDown extends StatefulWidget {
   final String label;
   final Color? labelcolor;
   final Color iconcolor;
-  final List<String> items;
+  // final List<String> items;
+  final List<DropdownMenuItem<String>>? items;
+
   final bool islabels;
   final Function(String?)? onChanged;
   final String? selectedValue;
@@ -19,13 +21,14 @@ class DropDown extends StatefulWidget {
     this.label = 'label',
     this.labelcolor = MyColors.primaryColor,
     this.iconcolor = MyColors.bordercolor,
-    this.items = const [
-      'All',
-      'Option 1',
-      'Option 2',
-      'Option 3',
-      'Option 4',
-    ],
+    required this.items,
+    // this.items = const [
+    //   'All',
+    //   'Option 1',
+    //   'Option 2',
+    //   'Option 3',
+    //   'Option 4',
+    // ],
     this.islabels = true,
     this.onChanged,
     this.selectedValue,
@@ -45,7 +48,7 @@ class _DropDownState extends State<DropDown> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if(widget.islabels)
-          hSizedBox,
+          vSizedBox,
           if(widget.islabels)
           ParagraphText(
             text: widget.label,
@@ -53,32 +56,34 @@ class _DropDownState extends State<DropDown> {
             color: widget.labelcolor,
             fontFamily: 'medium',
           ),
-          SizedBox(height: 7),
+          if(widget.islabels)
+
+            SizedBox(height: 7),
           DropdownButtonHideUnderline(
             child: DropdownButton2(
               isExpanded: true,
               hint: Text(
-                widget.items[0],
+                'Select Search Criteria',
                 style: TextStyle(
                   fontSize: 14,
                   color: MyColors.darkGreyColor,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
-              items: widget.items
-                  .map((item) => DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    // fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ))
-                  .toList(),
+              items: widget.items,
+              //     .map((item) => DropdownMenuItem<String>(
+              //   value: item,
+              //   child: Text(
+              //     item,
+              //     style: const TextStyle(
+              //       fontSize: 14,
+              //       // fontWeight: FontWeight.bold,
+              //       color: Colors.black,
+              //     ),
+              //     overflow: TextOverflow.ellipsis,
+              //   ),
+              // ))
+              //     .toList(),
               value: widget.selectedValue,
               onChanged: widget.onChanged,
               icon: const Icon(
@@ -91,7 +96,7 @@ class _DropDownState extends State<DropDown> {
               buttonWidth: MediaQuery.of(context).size.width - 32,
               buttonPadding: const EdgeInsets.only(left: 14, right: 14),
               buttonDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: MyColors.bordercolor,
                 ),

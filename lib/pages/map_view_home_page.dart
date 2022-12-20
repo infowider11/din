@@ -1,9 +1,9 @@
-import 'package:din/constants/constans.dart';
-import 'package:din/constants/global_keys.dart';
-import 'package:din/constants/image_urls.dart';
-import 'package:din/pages/marker_info_page.dart';
-import 'package:din/services/api_urls.dart';
-import 'package:din/services/webservices.dart';
+import 'package:Din/constants/constans.dart';
+import 'package:Din/constants/global_keys.dart';
+import 'package:Din/constants/image_urls.dart';
+import 'package:Din/pages/marker_info_page.dart';
+import 'package:Din/services/api_urls.dart';
+import 'package:Din/services/webservices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,7 +14,7 @@ import '../constants/global_data.dart';
 import '../constants/sized_box.dart';
 import '../functions/get_current_location.dart';
 import '../widgets/CustomTexts.dart';
-import 'package:din/widgets/customloader.dart';
+import 'package:Din/widgets/customloader.dart';
 import '../widgets/customtextfield.dart';
 
 class MapViewHomePage extends StatefulWidget {
@@ -171,7 +171,7 @@ class MapViewHomePageState extends State<MapViewHomePage>
                  ),
               
               
-                  wSizedBox2,
+                  hSizedBox2,
                   GestureDetector(
                     onTap: (){
 

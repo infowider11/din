@@ -1,31 +1,37 @@
-import 'dart:math';
 
-import 'package:din/constants/colors.dart';
-import 'package:din/constants/global_data.dart';
-import 'package:din/constants/image_urls.dart';
-import 'package:din/constants/navigation.dart';
-import 'package:din/constants/sized_box.dart';
-import 'package:din/detail.dart';
-import 'package:din/functions/get_current_location.dart';
-import 'package:din/pages/about_us_page.dart';
-import 'package:din/pages/grid_view_page.dart';
-import 'package:din/pages/list_view_home_page.dart';
-import 'package:din/pages/map_view_home_page.dart';
-import 'package:din/pages/marker_info_page.dart';
-import 'package:din/pages/zoomImg.dart';
-import 'package:din/services/api_urls.dart';
-import 'package:din/services/home_page_services.dart';
-import 'package:din/services/webservices.dart';
-import 'package:din/widgets/CustomTexts.dart';
-import 'package:din/widgets/buttons.dart';
-import 'package:din/widgets/customtextfield.dart';
-import 'package:din/widgets/dropdown.dart';
-import 'package:din/widgets/showSnackbar.dart';
+
+import 'dart:developer';
+
+import 'package:Din/constants/colors.dart';
+import 'package:Din/constants/global_data.dart';
+import 'package:Din/constants/image_urls.dart';
+import 'package:Din/constants/navigation.dart';
+import 'package:Din/constants/sized_box.dart';
+import 'package:Din/detail.dart';
+import 'package:Din/functions/get_current_location.dart';
+import 'package:Din/pages/about_us_page.dart';
+import 'package:Din/pages/contact_us_page.dart';
+import 'package:Din/pages/grid_view_page.dart';
+import 'package:Din/pages/list_view_home_page.dart';
+import 'package:Din/pages/map_view_home_page.dart';
+import 'package:Din/pages/marker_info_page.dart';
+import 'package:Din/pages/zoomImg.dart';
+import 'package:Din/services/api_urls.dart';
+import 'package:Din/services/home_page_services.dart';
+import 'package:Din/services/webservices.dart';
+import 'package:Din/widgets/CustomTexts.dart';
+import 'package:Din/widgets/buttons.dart';
+import 'package:Din/widgets/customloader.dart';
+import 'package:Din/widgets/customtextfield.dart';
+import 'package:Din/widgets/dropdown.dart';
+import 'package:Din/widgets/showSnackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'constants/ImagesList.dart';
 import 'constants/constans.dart';
@@ -46,10 +52,49 @@ class _HomePageState extends State<HomePage>
   // late TabController tabController ;
   // bool isChecked = false;
   TextEditingController email = TextEditingController();
+  TextEditingController keyword = TextEditingController();
+  // TextEditingController searchKeyword = TextEditingController();
   bool load = false;
-
+  bool isSuggestion = false;
+  String? selectedValue;
+  String? selectedSubValue;
   // bool showMap = false;
   List ViewFilterImg = [];
+  List categoryList = [];
+  List selectList = [];
+  DateTime? dateTime;
+  DateTime _selectedDate=DateTime.now();
+
+  String? catType;
+  List StaticDropDown= [{'name':'Yes','value':'1'},{'name':'No','value':'0'}];
+
+  getCategoryList()async{
+    categoryList= await Webservices.getList(ApiUrls.categoryList);
+    // print("categoryList----------------${res}");
+    // categoryList=res['data'];
+    print("categoryList----------------${categoryList}");
+    setState(() {
+
+    });
+  }
+  getType(name)async{
+
+    for(int i=0; i<categoryList.length;i++){
+      if(name==categoryList[i]['name']){
+        catType=categoryList[i]['type'];
+        print('catType----------------${catType}');
+        if(name=='dams.name'){
+          isSuggestion=true;
+        }
+        else if(catType=='select'){
+          selectList=categoryList[i]['value'];
+        }
+        setState(() {
+
+        });
+      }
+    }
+  }
 
   clearFilters()async{
     _scaffoldKey.currentState?.closeDrawer();
@@ -210,7 +255,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     // TODO: implement initState
     // tabController = TabController(length: 3, vsync: this);
-
+    getCategoryList();
     selectedDamCategories = {};
     // getDams();
     super.initState();
@@ -247,7 +292,7 @@ class _HomePageState extends State<HomePage>
                   },
                 ),
               ),
-              wSizedBox05,
+              hSizedBox05,
               Container(
                 constraints: BoxConstraints(
                   maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -272,12 +317,12 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    print(
-        ' ffffff ${!selectedkdamBakamType.containsKey(2) || selectedkdamBakamType.length != 1}  ${selectedkdamBakamType.containsKey(2)} ${selectedkdamBakamType.length}');
+    isSuggestion = false;
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: MyColors.whiteColor,
       appBar: AppBar(
+        toolbarHeight: 38,
         backgroundColor: MyColors.whiteColor,
         elevation: 1,
         automaticallyImplyLeading: false,
@@ -292,20 +337,39 @@ class _HomePageState extends State<HomePage>
                 color: Colors.black,
               )),
         ),
-        title: const Text('Home',
+        title: const Text('Dams in Nigeria',
             style: TextStyle(color: Colors.black, fontFamily: 'semibold')),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              color: Colors.black,
+
+          Tooltip(
+            message: 'Contact Us',
+            child: IconButton(
+              icon: const Icon(
+                Icons.contact_support,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                push(context: context, screen: ContactUsScreen());
+              },
             ),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('This is a Notification')));
-            },
           ),
+          Tooltip(
+            message: 'Download',
+            child: IconButton(
+              icon: const Icon(
+                Icons.book_online,
+                color: Colors.black,
+              ),
+              onPressed: ()async {
+                String _url = "https://dams.ng/permanent_assets/dams.pdf";
+                  if (!await launchUrl(Uri.parse(_url))) {
+                    throw 'Could not launch $_url';
+                  }
+              },
+            ),
+          ),
+
         ],
       ),
       drawer: Drawer(
@@ -350,7 +414,7 @@ class _HomePageState extends State<HomePage>
                               text: 'DAM/WEIRS',
                               fontSize: 16,
                             ),
-                            hSizedBox,
+                            vSizedBox,
                             Align(
                               alignment: Alignment.topLeft,
                               child: Wrap(
@@ -383,7 +447,7 @@ class _HomePageState extends State<HomePage>
                                             },
                                           ),
                                         ),
-                                        wSizedBox05,
+                                        hSizedBox05,
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -412,7 +476,7 @@ class _HomePageState extends State<HomePage>
                                 text: 'SIZE(Category)',
                                 fontSize: 16,
                               ),
-                              hSizedBox,
+                              vSizedBox,
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: Wrap(
@@ -445,7 +509,7 @@ class _HomePageState extends State<HomePage>
                                               },
                                             ),
                                           ),
-                                          wSizedBox05,
+                                          hSizedBox05,
                                           Container(
                                             constraints: BoxConstraints(
                                               maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -471,12 +535,12 @@ class _HomePageState extends State<HomePage>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              hSizedBox2,
+                              vSizedBox2,
                               MainHeadingText(
                                 text: 'TYPE',
                                 fontSize: 16,
                               ),
-                              hSizedBox,
+                              vSizedBox,
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: Wrap(
@@ -508,7 +572,7 @@ class _HomePageState extends State<HomePage>
                                               },
                                             ),
                                           ),
-                                          wSizedBox05,
+                                          hSizedBox05,
                                           Container(
                                             constraints: BoxConstraints(
                                               maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -531,12 +595,12 @@ class _HomePageState extends State<HomePage>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            hSizedBox2,
+                            vSizedBox2,
                             MainHeadingText(
                               text: 'USAGE',
                               fontSize: 16,
                             ),
-                            hSizedBox,
+                            vSizedBox,
                             Align(
                               alignment: Alignment.topLeft,
                               child: Wrap(
@@ -552,7 +616,7 @@ class _HomePageState extends State<HomePage>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            hSizedBox2,
+                            vSizedBox2,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.start,
@@ -605,7 +669,7 @@ class _HomePageState extends State<HomePage>
                                 // ),
                               ],
                             ),
-                            hSizedBox,
+                            vSizedBox,
                             Align(
                               alignment: Alignment.topLeft,
                               child: Wrap(
@@ -644,7 +708,7 @@ class _HomePageState extends State<HomePage>
                                             },
                                           ),
                                         ),
-                                        wSizedBox05,
+                                        hSizedBox05,
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -669,7 +733,7 @@ class _HomePageState extends State<HomePage>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            hSizedBox2,
+                            vSizedBox2,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.start,
@@ -735,7 +799,7 @@ class _HomePageState extends State<HomePage>
                             //   },
                             //   activeColor: MyColors.primaryColor,
                             //   title: Text('Show Map'),),
-                            hSizedBox,
+                            vSizedBox,
                             Align(
                               alignment: Alignment.topLeft,
                               child: Wrap(
@@ -772,7 +836,7 @@ class _HomePageState extends State<HomePage>
                                             },
                                           ),
                                         ),
-                                        wSizedBox05,
+                                        hSizedBox05,
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -796,7 +860,7 @@ class _HomePageState extends State<HomePage>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            hSizedBox2,
+                            vSizedBox2,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.start,
@@ -862,7 +926,7 @@ class _HomePageState extends State<HomePage>
                             //   },
                             //   activeColor: MyColors.primaryColor,
                             //   title: Text('Show Map'),),
-                            hSizedBox,
+                            vSizedBox,
                             Align(
                               alignment: Alignment.topLeft,
                               child: Wrap(
@@ -902,7 +966,7 @@ class _HomePageState extends State<HomePage>
                                             },
                                           ),
                                         ),
-                                        wSizedBox05,
+                                        hSizedBox05,
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -927,7 +991,7 @@ class _HomePageState extends State<HomePage>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            hSizedBox2,
+                            vSizedBox2,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.start,
@@ -992,7 +1056,7 @@ class _HomePageState extends State<HomePage>
                             //   },
                             //   activeColor: MyColors.primaryColor,
                             //   title: Text('Show Map'),),
-                            hSizedBox,
+                            vSizedBox,
                             Align(
                               alignment: Alignment.topLeft,
                               child: Wrap(
@@ -1028,7 +1092,7 @@ class _HomePageState extends State<HomePage>
                                             },
                                           ),
                                         ),
-                                        wSizedBox05,
+                                        hSizedBox05,
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: MyGlobalConstants.filterMaxWidth,
@@ -1363,7 +1427,7 @@ class _HomePageState extends State<HomePage>
                         //     )
                         //   ],
                         // ),
-                        hSizedBox8,
+                        vSizedBox8,
                         // Image.asset('assets/images/map-2.png'),
                         // hSizedBox4,
                       ],
@@ -1539,7 +1603,7 @@ class _HomePageState extends State<HomePage>
                           fontSize: 18,
                           color: MyColors.purpleColor),
                     ),
-                    wSizedBox2,
+                    hSizedBox2,
                     Expanded(
                       child: RoundEdgedButton(
                           text: 'Reset',
@@ -1563,7 +1627,7 @@ class _HomePageState extends State<HomePage>
         child: Column(
           children: <Widget>[
             Container(
-              height: 50,
+              height: 38,
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(color: MyColors.purpleColor, width: 2),
@@ -1625,105 +1689,117 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.only(left: 16,right:16, top: 10, bottom: 5),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    flex: 8,
-                    child: TypeAheadField<Map<String, dynamic>>(
-                      textFieldConfiguration: TextFieldConfiguration(
-                        autofocus: false,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                            fontFamily: 'regular'),
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16,right:16,),
+                      child: TypeAheadField<Map<String, dynamic>>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          autofocus: false,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontFamily: 'regular'),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              // border: InputBorder.none,
+                              hintText: 'Search by name, Min 3 Char'),
+                        ),
+                        suggestionsCallback: (pattern) async {
+                          return await SearchingServices.getSuggestions(pattern,'');
+                        },
+                        itemBuilder: (context, Map<String, dynamic> suggestion) {
+                          return Container(
+                            padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            child: ParagraphText(
+                              text: '${suggestion['name']}',
+                              color: Colors.black,
                             ),
-                            // border: InputBorder.none,
-                            hintText: 'Search by name, Min 3 Char'),
-                      ),
-                      suggestionsCallback: (pattern) async {
-                        return await SearchingServices.getSuggestions(pattern);
-                      },
-                      itemBuilder: (context, Map<String, dynamic> suggestion) {
-                        return Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                          child: ParagraphText(
-                            text: '${suggestion['name']}',
-                            color: Colors.black,
-                          ),
-                        );
-                        return ListTile(
-                          leading: Icon(Icons.shopping_cart),
-                          title: Text(suggestion['name'] ?? 'd'),
-                          subtitle: Text('\$${suggestion['price']}'),
-                        );
-                      },
-                      onSuggestionSelected: (Map<String, dynamic> suggestion) {
-                        try {
-                          // markers.add(
-                          //   Marker(
-                          //     point: LatLng(double.parse(suggestion['latitude']),
-                          //         double.parse(suggestion['longitude'])),
-                          //     height: 95,
-                          //     width: 100,
-                          //     builder: (context) {
-                          //       return GestureDetector(
-                          //         onTap: (){
-                          //           print('Marker ${suggestion['name']} pressed');
-                          //           showDialog(context: context, builder: (context){
-                          //             return MarkerInfoWindow(damInfo: suggestion,);
-                          //           });
-                          //         },
-                          //         child: Column(
-                          //           children: [
-                          //             Expanded(
-                          //               child: Container(
-                          //                 child: Image.asset(
-                          //                   MyImages.markerIcon,
-                          //                   fit: BoxFit.fitHeight,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //             Icon(Icons.circle, color: Colors.brown,size: 10,),
-                          //             Container(
-                          //               height: 10,
-                          //               width: 1,
-                          //               color: Colors.blue,
-                          //             ),
-                          //
-                          //             Container(
-                          //               padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                          //               decoration: BoxDecoration(
-                          //                   color: Colors.blue,
-                          //                   borderRadius: BorderRadius.circular(20)
-                          //               ),
-                          //
-                          //               child: ParagraphText(text: '${suggestion['name']}', fontSize: 11,color: Colors.white,),
-                          //             )
-                          //           ],
-                          //         ),
-                          //       );
-                          //     },
-                          //   ),
-                          // );
-                          // setState(() {
-                          //
-                          // });
-                          if (suggestion['latitude'] != '' &&
-                              suggestion['longitude'] != '' &&
-                              suggestion['latitude'] != null &&
-                              suggestion['longitude'] != null) {
-                            MyGlobalKeys.mapViewPageKey.currentState
-                                ?.resetLocation(
-                                    LatLng(double.parse(suggestion['latitude']),
-                                        double.parse(suggestion['longitude'])),
-                                    zoom: 17);
+                          );
+                          return ListTile(
+                            leading: Icon(Icons.shopping_cart),
+                            title: Text(suggestion['name'] ?? 'd'),
+                            subtitle: Text('\$${suggestion['price']}'),
+                          );
+                        },
+                        onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                          try {
+                            // markers.add(
+                            //   Marker(
+                            //     point: LatLng(double.parse(suggestion['latitude']),
+                            //         double.parse(suggestion['longitude'])),
+                            //     height: 95,
+                            //     width: 100,
+                            //     builder: (context) {
+                            //       return GestureDetector(
+                            //         onTap: (){
+                            //           print('Marker ${suggestion['name']} pressed');
+                            //           showDialog(context: context, builder: (context){
+                            //             return MarkerInfoWindow(damInfo: suggestion,);
+                            //           });
+                            //         },
+                            //         child: Column(
+                            //           children: [
+                            //             Expanded(
+                            //               child: Container(
+                            //                 child: Image.asset(
+                            //                   MyImages.markerIcon,
+                            //                   fit: BoxFit.fitHeight,
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //             Icon(Icons.circle, color: Colors.brown,size: 10,),
+                            //             Container(
+                            //               height: 10,
+                            //               width: 1,
+                            //               color: Colors.blue,
+                            //             ),
+                            //
+                            //             Container(
+                            //               padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            //               decoration: BoxDecoration(
+                            //                   color: Colors.blue,
+                            //                   borderRadius: BorderRadius.circular(20)
+                            //               ),
+                            //
+                            //               child: ParagraphText(text: '${suggestion['name']}', fontSize: 11,color: Colors.white,),
+                            //             )
+                            //           ],
+                            //         ),
+                            //       );
+                            //     },
+                            //   ),
+                            // );
+                            // setState(() {
+                            //
+                            // });
+                            if (suggestion['latitude'] != '' &&
+                                suggestion['longitude'] != '' &&
+                                suggestion['latitude'] != null &&
+                                suggestion['longitude'] != null) {
+                              MyGlobalKeys.mapViewPageKey.currentState
+                                  ?.resetLocation(
+                                  LatLng(double.parse(suggestion['latitude']),
+                                      double.parse(suggestion['longitude'])),
+                                  zoom: 17);
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return MarkerInfoWindow(
+                                      damInfo: suggestion,
+                                    );
+                                  });
+                            } else {
+                              showSnackbar('Location coordinates not available');
+                            }
+                          } catch (e) {
+                            print('Error in catch block 182838 $e');
                             showDialog(
                                 context: context,
                                 builder: (context) {
@@ -1731,79 +1807,434 @@ class _HomePageState extends State<HomePage>
                                     damInfo: suggestion,
                                   );
                                 });
-                          } else {
-                            showSnackbar('Location coordinates not available');
                           }
-                        } catch (e) {
-                          print('Error in catch block 182838 $e');
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return MarkerInfoWindow(
-                                  damInfo: suggestion,
-                                );
-                              });
-                        }
-                        // Navigator.of(context).push<void>(MaterialPageRoute(
-                        //     builder: (context) => ProductPage(product: suggestion)));
+                          // Navigator.of(context).push<void>(MaterialPageRoute(
+                          //     builder: (context) => ProductPage(product: suggestion)));
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                      child: Container(),
+                  )
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 16,right:16, top: 5, bottom: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // if(categoryList.length>0)
+                  Expanded(
+                    flex:4,
+                    child:DropDown(islabels:false,
+                      items: categoryList.map((e) {
+                        return DropdownMenuItem<String>(
+                          value: e['name'].toString(),
+                          child: Text(e['title'].toString()),
+                        );
+                      }).toList(),
+                      selectedValue: selectedValue=='' ? null :selectedValue,
+                      // selectedValue: selectedValue,
+                      onChanged: (String? value) {
+
+                        setState(() {
+                          isSuggestion=false;
+                          selectedValue = value;
+                          keyword.text='';
+                          selectedSubValue=null;
+
+                          getType(selectedValue);
+                        });
                       },
                     ),
-                    // CustomTextField(
-                    //     controller: email,
-                    //     suffix: Padding(
-                    //       padding: const EdgeInsets.only(top: 5),
-                    //       child:email.text.length<1?null: IconButton(
-                    //         padding: EdgeInsets.zero,
-                    //         onPressed: (){
-                    //           email.clear();
-                    //           damSearchText = email.text;
-                    //           setState(() {
-                    //
-                    //           });
-                    //         },
-                    //         icon: Icon(Icons.clear),
-                    //       ),
-                    //     ),
-                    //     borderradius: 100,
-                    //     onChanged: (val){
-                    //       print('hello');
-                    //
-                    //       if(email.text.length>2){
-                    //         damSearchText = email.text;
-                    //         var request = {
-                    //           'search_text': val
-                    //         };
-                    //         // setState(() {
-                    //         //
-                    //         // });
-                    //         getDams(request: request).then((d){
-                    //           setState(() {
-                    //
-                    //           });
-                    //         });
-                    //       }else{
-                    //         getDams().then((d){
-                    //           setState(() {
-                    //
-                    //           });
-                    //         });
-                    //       }
-                    //       // setState(() {
-                    //       //
-                    //       // });
-                    //     },
-                    //
-                    //     hintText: 'Search by name, Min 3 char'),
+
                   ),
-                  wSizedBox05,
+                  // if(catType=='string' || catType=='number')
+                  hSizedBox05,
+                  if((catType=='string' || catType=='number') && !isSuggestion )
                   Expanded(
-                      flex: 4,
+                    flex:4,
+                    child: CustomTextField(controller: keyword,hintText: 'Search...',
+                    keyboardType:catType=='number'?TextInputType.number:TextInputType.text ,),
+                  ),
+                  if(catType=='string' || catType=='number' && !isSuggestion)
+                  hSizedBox05,
+                  if(catType=='bool-number' && !isSuggestion)
+                    Expanded(
+                      flex:3,
+                      child:DropDown(islabels:false,
+                        items: StaticDropDown.map((e) {
+                          return DropdownMenuItem<String>(
+                            value: e['value'].toString(),
+                            child: Text(e['name'].toString()),
+                          );
+                        }).toList(),
+                        selectedValue: selectedSubValue=='' ? null :selectedSubValue,
+                        // selectedValue: selectedValue,
+                        onChanged: (String? value) {
+
+                          setState(() {
+                            selectedSubValue = value;
+                            // getType(selectedValue);
+                          });
+                        },
+                      ),
+
+                    ),
+                  if(catType=='select' && !isSuggestion)
+                    Expanded(
+                      flex:3,
+                      child:DropDown(islabels:false,
+                        items: selectList.map((e) {
+                          return DropdownMenuItem<String>(
+                            value: e['value'].toString(),
+                            child: Text(e['title'].toString()),
+                          );
+                        }).toList(),
+                        selectedValue: selectedSubValue=='' ? null :selectedSubValue,
+                        // selectedValue: selectedValue,
+                        onChanged: (String? value) {
+
+                          setState(() {
+                            selectedSubValue = value;
+                            // getType(selectedValue);
+                          });
+                        },
+                      ),
+
+                    ),
+                  if(catType=='date' && !isSuggestion)
+                    Expanded(
+                      flex:3,
+                      child: GestureDetector(
+                        onTap: () async {
+                          DateTime? temp = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1977),
+                              lastDate: DateTime(2099));
+                          // showTimePicker(context: context, initialTime: initialTime)
+                          if (temp != null) {
+                            dateTime = temp;
+                            keyword.text = DateFormat("yyyy-MM-dd")
+                                .format(dateTime!)
+                                .toString();
+                          }
+                          setState(() {});
+                        },
+                        child: CustomTextField(
+                          controller: keyword,
+                          hintText: 'Select Date',
+                          // label: 'Date of birth',
+                          showlabel: false,
+                          enable: false,
+                        ),
+                      ),
+                    ),
+                  if(catType=='year' && !isSuggestion)
+                    Expanded(
+                      flex:3,
+                      child: GestureDetector(
+                        onTap: () async {
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Select Year"),
+                                content: Container( // Need to use container to add size constraint.
+                                  width: 300,
+                                  height: 300,
+                                  child: YearPicker(
+                                    firstDate: DateTime(DateTime.now().year - 100, 1),
+                                    lastDate: DateTime(DateTime.now().year + 100, 1),
+                                    initialDate: DateTime.now(),
+                                    // save the selected date to _selectedDate DateTime variable.
+                                    // It's used to set the previous selected date when
+                                    // re-showing the dialog.
+                                    selectedDate: _selectedDate,
+                                    onChanged: (DateTime dateTime) {
+
+                                      setState(() {
+                                        _selectedDate=dateTime;
+                                        keyword.text=DateFormat.y().format(dateTime);
+                                        print('_selectedDate----$_selectedDate');
+                                      });
+                                      // close the dialog when year is selected.
+                                      Navigator.pop(context);
+
+                                      // Do something with the dateTime selected.
+                                      // Remember that you need to use dateTime.year to get the year
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: CustomTextField(
+                          controller: keyword,
+                          hintText: 'Select Year',
+                          // label: 'Date of birth',
+                          showlabel: false,
+                          enable: false,
+                        ),
+                      ),
+                    ),
+
+                  // Expanded(
+                  //   flex:2,
+                  //   child: RoundEdgedButton(text: '',
+                  //   width: 25,
+                  //   isIcon:true,
+                  //   iconName: Icons.search,
+                  //
+                  //   onTap: ()async{
+                  //     String text = catType=='bool-number' || catType=='select' ? selectedSubValue!:keyword.text;
+                  //     String search_field=selectedValue!;
+                  //     var res = await SearchingServices.getSuggestions(text,search_field);
+                  //     print("res from search----------------$res");
+                  //     setState(() {
+                  //
+                  //     });
+                  //   },),
+                  //
+                  // ),
+
+                  if(isSuggestion)
+                    Expanded(
+                      flex: 3,
+                      child: TypeAheadField<Map<String, dynamic>>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          autofocus: false,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontFamily: 'regular'),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              // border: InputBorder.none,
+                              hintText: 'Search by name, Min 3 Char'),
+                        ),
+                        suggestionsCallback: (pattern) async {
+                          return await SearchingServices.getSuggestions(pattern,'');
+                        },
+                        itemBuilder: (context, Map<String, dynamic> suggestion) {
+                          return Container(
+                            padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            child: ParagraphText(
+                              text: '${suggestion['name']}',
+                              color: Colors.black,
+                            ),
+                          );
+                          return ListTile(
+                            leading: Icon(Icons.shopping_cart),
+                            title: Text(suggestion['name'] ?? 'd'),
+                            subtitle: Text('\$${suggestion['price']}'),
+                          );
+                        },
+                        onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                          try {
+                            // markers.add(
+                            //   Marker(
+                            //     point: LatLng(double.parse(suggestion['latitude']),
+                            //         double.parse(suggestion['longitude'])),
+                            //     height: 95,
+                            //     width: 100,
+                            //     builder: (context) {
+                            //       return GestureDetector(
+                            //         onTap: (){
+                            //           print('Marker ${suggestion['name']} pressed');
+                            //           showDialog(context: context, builder: (context){
+                            //             return MarkerInfoWindow(damInfo: suggestion,);
+                            //           });
+                            //         },
+                            //         child: Column(
+                            //           children: [
+                            //             Expanded(
+                            //               child: Container(
+                            //                 child: Image.asset(
+                            //                   MyImages.markerIcon,
+                            //                   fit: BoxFit.fitHeight,
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //             Icon(Icons.circle, color: Colors.brown,size: 10,),
+                            //             Container(
+                            //               height: 10,
+                            //               width: 1,
+                            //               color: Colors.blue,
+                            //             ),
+                            //
+                            //             Container(
+                            //               padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            //               decoration: BoxDecoration(
+                            //                   color: Colors.blue,
+                            //                   borderRadius: BorderRadius.circular(20)
+                            //               ),
+                            //
+                            //               child: ParagraphText(text: '${suggestion['name']}', fontSize: 11,color: Colors.white,),
+                            //             )
+                            //           ],
+                            //         ),
+                            //       );
+                            //     },
+                            //   ),
+                            // );
+                            // setState(() {
+                            //
+                            // });
+                            if (suggestion['latitude'] != '' &&
+                                suggestion['longitude'] != '' &&
+                                suggestion['latitude'] != null &&
+                                suggestion['longitude'] != null) {
+                              MyGlobalKeys.mapViewPageKey.currentState
+                                  ?.resetLocation(
+                                  LatLng(double.parse(suggestion['latitude']),
+                                      double.parse(suggestion['longitude'])),
+                                  zoom: 17);
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return MarkerInfoWindow(
+                                      damInfo: suggestion,
+                                    );
+                                  });
+                            } else {
+                              showSnackbar('Location coordinates not available');
+                            }
+                          } catch (e) {
+                            print('Error in catch block 182838 $e');
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return MarkerInfoWindow(
+                                    damInfo: suggestion,
+                                  );
+                                });
+                          }
+                          // Navigator.of(context).push<void>(MaterialPageRoute(
+                          //     builder: (context) => ProductPage(product: suggestion)));
+                        },
+                      ),
+                      // CustomTextField(
+                      //     controller: email,
+                      //     suffix: Padding(
+                      //       padding: const EdgeInsets.only(top: 5),
+                      //       child:email.text.length<1?null: IconButton(
+                      //         padding: EdgeInsets.zero,
+                      //         onPressed: (){
+                      //           email.clear();
+                      //           damSearchText = email.text;
+                      //           setState(() {
+                      //
+                      //           });
+                      //         },
+                      //         icon: Icon(Icons.clear),
+                      //       ),
+                      //     ),
+                      //     borderradius: 100,
+                      //     onChanged: (val){
+                      //       print('hello');
+                      //
+                      //       if(email.text.length>2){
+                      //         damSearchText = email.text;
+                      //         var request = {
+                      //           'search_text': val
+                      //         };
+                      //         // setState(() {
+                      //         //
+                      //         // });
+                      //         getDams(request: request).then((d){
+                      //           setState(() {
+                      //
+                      //           });
+                      //         });
+                      //       }else{
+                      //         getDams().then((d){
+                      //           setState(() {
+                      //
+                      //           });
+                      //         });
+                      //       }
+                      //       // setState(() {
+                      //       //
+                      //       // });
+                      //     },
+                      //
+                      //     hintText: 'Search by name, Min 3 char'),
+                    ),
+                  hSizedBox05,
+
+
+
+                  Flexible(
+                    flex: 2,
+                      child: GestureDetector(
+                        onTap: ()async{
+                          String text = catType=='bool-number' || catType=='select' ? selectedSubValue!:keyword.text;
+                          String search_field=selectedValue!;
+                          setState(() {
+                            load=true;
+                          });
+                          var res = await SearchingServices.getSuggestions(text,search_field);
+                          print("res from search----------------$res");
+                          setState(() {
+                         load=false;
+                          });
+                        },
+                        child: Tooltip(
+                          message: 'Search',
+                          child: Center(
+                            child: Container(
+                              height: 50,
+                              // padding: EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFED9D9D9),
+                                  
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.search,
+                                    color: MyColors.primaryColor,
+                                    size: 25,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )),
+
+
+
+
+
+
+
+
+
+                  hSizedBox05,
+                  Flexible(
+                      flex: 2,
                       child: GestureDetector(
                         onTap: () => _scaffoldKey.currentState?.openDrawer(),
                         child: Tooltip(
-                          message: 'Select for more options',
+                          message: 'Select Filter for more options',
                           child: Center(
                             child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
                               height: 50,
                               decoration: BoxDecoration(
                                   color: Color(0xFED9D9D9),
@@ -1817,23 +2248,31 @@ class _HomePageState extends State<HomePage>
                                     color: MyColors.primaryColor,
                                     size: 25,
                                   ),
-                                  MainHeadingText(
-                                    text: 'Filter',
-                                    fontFamily: 'regular',
-                                    color: MyColors.primaryColor,
-                                  )
+                                  // MainHeadingText(
+                                  //   text: 'Filter',
+                                  //   fontFamily: 'regular',
+                                  //   color: MyColors.primaryColor,
+                                  // )
                                 ],
                               ),
                             ),
                           ),
                         ),
                       )),
-                  wSizedBox05,
+                  hSizedBox05,
                   Expanded(
                       flex: 2,
                       child: GestureDetector(
                         onTap: ()async{
+                          isSuggestion=false;
+                          catType=null;
+                          keyword.text='';
+                          selectedSubValue=null;
+                          selectedValue=null;
                           await clearFilters();
+                          setState(() {
+
+                          });
                         },
                         child: Tooltip(
                           message: 'Clear Filters',
@@ -1861,13 +2300,13 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-            hSizedBox,
+            vSizedBox,
 
             Expanded(
               child: TabBarView(
                 // controller: tabController,
                 children: [
-                  MapViewHomePage(
+                  load?CustomLoader():MapViewHomePage(
                     key: MyGlobalKeys.mapViewPageKey,
                     isViewMap: ImagesList.length > 0 ? true : false,
                     // isViewMap: showMapHydro==true || showMapRiver==true || showMapGeo==true || showMapState==true ?true:false,
